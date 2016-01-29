@@ -29,7 +29,7 @@
  http://wiki.apache.org/solr/SchemaXml
 -->
 
-<schema name="example" version="1.5">
+<schema name="soundfingerprinting" version="1.5">
   <!-- attribute "name" is the name of this schema and is only used for display purposes.
        version="x.y" is Solr's version number for the schema syntax and 
        semantics.  It should not normally be changed by applications.
@@ -110,6 +110,18 @@
      tokens
    -->   
    <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false" /> 
+   <!-- DocType definition will allow us to differente between 'tables' -->
+   <field name="docType" type="string" indexed="true" stored="true" multiValued="false"/>
+   <field name="artist" type="string" indexed="true" stored="true" multiValued="false"/>
+   <field name="title" type="string" indexed="true" stored="true" multiValued="false"/>
+   <field name="album" type="string" indexed="true" stored="true" multiValued="false"/>
+   <field name="isrc" type="string" indexed="true" stored="true" multiValued="false"/>
+   <field name="group" type="string" indexed="true" stored="true" multiValued="false"/>
+   <field name="trackLength" type="double" indexed="true" stored="true" multiValued="false"/>
+
+   <!-- -->
+
+
 
    <!-- Dynamic field definitions allow using convention over configuration
        for fields via the specification of patterns to match field names. 
