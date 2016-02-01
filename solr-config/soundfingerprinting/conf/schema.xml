@@ -109,7 +109,7 @@
      in a compatible way. Any analysis applied to the <uniqueKey> should _not_ produce multiple
      tokens
    -->   
-   <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false" /> 
+   <field name="id" type="int" indexed="true" stored="true" required="true" multiValued="false" /> 
    <!-- DocType definition will allow us to differente between 'tables' -->
    <field name="docType" type="string" indexed="true" stored="true" multiValued="false"/>
    <field name="artist" type="string" indexed="true" stored="true" multiValued="false"/>
@@ -119,8 +119,17 @@
    <field name="group" type="string" indexed="true" stored="true" multiValued="false"/>
    <field name="trackLength" type="double" indexed="true" stored="true" multiValued="false"/>
 
-   <!-- -->
+   <!--SubFingerprint definition -->
+   <field name="signature" type="binary" indexed="false" stored="true" multiValued="false"/>
+   <field name="trackIdOfSub" type="string" indexed="true" stored="true" multiValued="false" />
+   <field name="sequenceNumber" type="int" indexed="false" stored="true" multiValued="false" />
+   <field name="sequenceAt" type="float" indexed="false" stored="true" multiValued="false" />
 
+   <!-- Hashes -->
+   <field name="hashTable" type="int" indexed="true" stored="true" multiValued="false" />
+   <field name="hashBin" type="long" indexed="true" stored="true" multiValued="false" />
+   <field name="subfingerprintId" type="int" indexed="true" stored="true" multiValued="false" />
+   <field name="trackId" type="int" indexed="true" stored="true" multiValued="false" />
 
 
    <!-- Dynamic field definitions allow using convention over configuration
