@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>a265df23-9288-46d0-bae6-044878a340e3</ProjectGuid>
+    <ProjectGuid>{6B8D3138-503D-4DD3-8A1F-1A12186DFC3A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SoundFingerprinting.Solr.Test</RootNamespace>
@@ -35,6 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="SoundFingerprinting">
+      <HintPath>..\SoundFingerprinting.Solr\packages\SoundFingerprinting.2.2.0\lib\net45\SoundFingerprinting.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <Choose>
@@ -50,8 +53,14 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="TrackDaoIntTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SoundFingerprinting.Solr\SoundFingerprinting.Solr.csproj">
+      <Project>{d17d8f7c-44e3-400c-94ff-20e2f3c2eb9e}</Project>
+      <Name>SoundFingerprinting.Solr</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
