@@ -37,6 +37,7 @@
   -->
   <luceneMatchVersion>5.4.0</luceneMatchVersion>
 
+  <lib dir="lib" regex=".*\.jar" />
   <!-- Data Directory
 
        Used to specify an alternate directory to hold all index data
