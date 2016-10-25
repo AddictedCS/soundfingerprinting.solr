@@ -64,20 +64,20 @@
       <HintPath>packages\SolrNet.0.5.0-alpha2\lib\SolrNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="SoundFingerprinting, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\SoundFingerprinting.2.2.0\lib\net45\SoundFingerprinting.dll</HintPath>
+    <Reference Include="SoundFingerprinting, Version=2.2.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\SoundFingerprinting.2.2.2\lib\net45\SoundFingerprinting.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="SoundFingerprinting.Audio, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\SoundFingerprinting.2.2.0\lib\net45\SoundFingerprinting.Audio.dll</HintPath>
+      <HintPath>packages\SoundFingerprinting.2.2.2\lib\net45\SoundFingerprinting.Audio.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="SoundFingerprinting.Audio.NAudio, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\SoundFingerprinting.2.2.0\lib\net45\SoundFingerprinting.Audio.NAudio.dll</HintPath>
+      <HintPath>packages\SoundFingerprinting.2.2.2\lib\net45\SoundFingerprinting.Audio.NAudio.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="SoundFingerprinting.Infrastructure, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\SoundFingerprinting.2.2.0\lib\net45\SoundFingerprinting.Infrastructure.dll</HintPath>
+      <HintPath>packages\SoundFingerprinting.2.2.2\lib\net45\SoundFingerprinting.Infrastructure.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -101,7 +101,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DAO\HashBinDao.cs" />
+    <Compile Include="HashBinDao.cs" />
+    <Compile Include="SubFingerprintDao.cs" />
     <Compile Include="DAO\SubFingerprintDTO.cs" />
     <Compile Include="Infrastructure\SolrModuleLoader.cs" />
     <Compile Include="SolrModelReference.cs" />

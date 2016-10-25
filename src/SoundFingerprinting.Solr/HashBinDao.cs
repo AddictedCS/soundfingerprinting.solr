@@ -10,7 +10,7 @@
     {
         public void InsertHashBins(long[] hashBins, IModelReference subFingerprintReference, IModelReference trackReference)
         {
-            throw new System.NotImplementedException();
+            // Do Nothing
         }
 
         public IList<HashedFingerprint> ReadHashedFingerprintsByTrackReference(IModelReference trackReference)

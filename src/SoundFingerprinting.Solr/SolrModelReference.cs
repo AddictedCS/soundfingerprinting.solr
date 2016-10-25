@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SoundFingerprinting.Solr
+﻿namespace SoundFingerprinting.Solr
 {
     using SoundFingerprinting.DAO;
 
