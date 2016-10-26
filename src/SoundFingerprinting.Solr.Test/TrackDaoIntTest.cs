@@ -141,7 +141,7 @@
         public void DeleteCollectionOfTracksTest()
         {
             const int NumberOfTracks = 10;
-            var tracks = this.InsertRandomTracks(NumberOfTracks);
+            InsertRandomTracks(NumberOfTracks);
 
             var allTracks = trackDao.ReadAll();
 
