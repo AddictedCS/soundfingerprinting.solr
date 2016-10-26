@@ -1,19 +1,9 @@
 ﻿namespace SoundFingerprinting.Solr
 {
-    using System.Collections.Generic;
-
-    using SoundFingerprinting.DAO;
-    using SoundFingerprinting.Data;
-
     public class SolrModelService : ModelService
     {
-        public SolrModelService(
-            ITrackDao trackDao,
-            IHashBinDao hashBinDao,
-            ISubFingerprintDao subFingerprintDao, 
-            IFingerprintDao fingerprintDao, 
-            ISpectralImageDao spectralImageDao)
-            : base(trackDao, hashBinDao, subFingerprintDao, fingerprintDao, spectralImageDao)
+        public SolrModelService()
+            : base(new TrackDao(), new HashBinDao(), new SubFingerprintDao(), new FingerprintDao(), new SpectralImageDao())
         {
         }
     }

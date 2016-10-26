@@ -8,5 +8,10 @@
             : base(id)
         {
         }
+
+        public static string GetId(IModelReference modelReference)
+        {
+            return ((SolrModelReference)modelReference).Id;
+        }
     }
 }

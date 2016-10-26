@@ -1,8 +1,6 @@
-﻿namespace SoundFingerprinting.Solr.Test
+﻿namespace SoundFingerprinting.Solr.Tests
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-    using SoundFingerprinting.Solr.DAO;
 
     [TestClass]
     public class SubFingerprintDaoIntTest
@@ -12,7 +10,7 @@
         [TestMethod]
         public void ShouldInsertSubFingerprintToSolrWithoutTheHash()
         {
-            var subReference = dao.InsertSubFingerprint(new byte[0], 1, 0d, new SolrModelReference("track-id"));
+            var subReference = this.dao.InsertSubFingerprint(new byte[0], 1, 0d, new SolrModelReference("track-id"));
 
             Assert.IsNotNull(subReference.Id);
         }

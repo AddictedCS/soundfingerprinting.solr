@@ -2,8 +2,6 @@
 {
     using System;
 
-    using Microsoft.Practices.ServiceLocation;
-
     using SolrNet;
 
     using SoundFingerprinting.DAO;
@@ -11,13 +9,17 @@
     using SoundFingerprinting.Infrastructure;
     using SoundFingerprinting.Solr.DAO;
 
-    public class SubFingerprintDao : ISubFingerprintDao
+    internal class SubFingerprintDao : ISubFingerprintDao
     {
-        private ISolrOperations<SubFingerprintDTO> solr;
+        private readonly ISolrOperations<SubFingerprintDTO> solr;
 
-        public SubFingerprintDao()
+        public SubFingerprintDao() : this(DependencyResolver.Current.Get<ISolrOperations<SubFingerprintDTO>>())
         {
-            this.solr = DependencyResolver.Current.Get<ISolrOperations<SubFingerprintDTO>>();
+        }
+
+        protected SubFingerprintDao(ISolrOperations<SubFingerprintDTO> solr)
+        {
+            this.solr = solr;
         }
 
         public SubFingerprintData ReadSubFingerprint(IModelReference subFingerprintReference)
@@ -30,12 +32,12 @@
             Guid subId = Guid.NewGuid();
 
             // Ignore byte signature. We will use it only in HashBinDao class!
-            var dto = new SubFingerprintDTO()
+            var dto = new SubFingerprintDTO
                 {
                     SubFingerprintId = subId.ToString(),
                     SequenceAt = sequenceAt,
                     SequenceNumber = sequenceNumber,
-                    TrackId = ((SolrModelReference)trackReference).Id
+                    TrackId = SolrModelReference.GetId(trackReference)
                 };
 
             this.solr.Add(dto);
