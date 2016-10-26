@@ -10,12 +10,12 @@
     {
         public void InsertSpectralImages(IEnumerable<float[]> spectralImages, IModelReference trackReference)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("Solr does not support spectral image storage");
         }
 
         public List<SpectralImageData> GetSpectralImagesByTrackId(IModelReference trackReference)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("Solr does not support spectral image storage");
         }
     }
 }

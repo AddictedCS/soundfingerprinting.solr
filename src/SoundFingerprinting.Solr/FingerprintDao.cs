@@ -10,12 +10,12 @@
     {
         public IModelReference InsertFingerprint(FingerprintData fingerprint)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("Solr does not support fingerprint storage");
         }
 
         public IList<FingerprintData> ReadFingerprintsByTrackReference(IModelReference trackReference)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("Solr does not suport fingerprint storage");
         }
     }
 }

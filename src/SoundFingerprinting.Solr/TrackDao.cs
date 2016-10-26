@@ -91,8 +91,7 @@
                 dto.Album,
                 dto.ReleaseYear,
                 dto.TrackLengthSec,
-                new SolrModelReference(dto.Id));
-            track.GroupId = dto.GroupId;
+                new SolrModelReference(dto.Id)) { GroupId = dto.GroupId };
             return track;
         }
 
