@@ -4,7 +4,7 @@
 
     using SolrNet.Attributes;
 
-    public class SubFingerprintDTO
+    internal class SubFingerprintDTO
     {
         [SolrUniqueKey("subFingerprintId")]
         public string SubFingerprintId { get; set; }

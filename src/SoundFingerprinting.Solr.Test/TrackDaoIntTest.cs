@@ -1,4 +1,4 @@
-﻿namespace SoundFingerprinting.Solr.Test
+﻿namespace SoundFingerprinting.Solr.Tests
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
