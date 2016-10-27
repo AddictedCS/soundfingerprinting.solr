@@ -85,9 +85,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DictionaryToHashConverter.cs" />
+    <Compile Include="HashConverter.cs" />
     <Compile Include="DAO\TrackDTO.cs" />
     <Compile Include="FingerprintDao.cs" />
     <Compile Include="HashBinDao.cs" />
+    <Compile Include="SolrQueryBuilder.cs" />
     <Compile Include="SpectralImageDao.cs" />
     <Compile Include="SubFingerprintDao.cs" />
     <Compile Include="DAO\SubFingerprintDTO.cs" />
