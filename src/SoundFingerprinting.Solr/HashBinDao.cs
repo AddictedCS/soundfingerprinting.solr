@@ -3,6 +3,7 @@
     using System.Collections.Generic;
 
     using SolrNet;
+    using SolrNet.Commands.Parameters;
 
     using SoundFingerprinting.DAO;
     using SoundFingerprinting.DAO.Data;
@@ -48,11 +49,32 @@
         {
             string queryString = solrQueryBuilder.BuildReadQueryFor(hashBins, thresholdVotes);
             var results = solr.Query(new SolrQuery(queryString));
+            return ConvertResults(results);
+        }
+
+        public IEnumerable<SubFingerprintData> ReadSubFingerprintDataByHashBucketsThresholdWithGroupId(long[] hashBins, int thresholdVotes, string trackGroupId)
+        {
+            string queryString = solrQueryBuilder.BuildReadQueryFor(hashBins, thresholdVotes);
+            var results = solr.Query(
+                new SolrQuery(queryString),
+                new QueryOptions 
+                {
+                        FilterQueries = new ISolrQuery[]
+                        {
+                            new SolrQueryByField("groupId", trackGroupId)
+                        }
+                });
+
+            return ConvertResults(results);
+        }
+
+        private IEnumerable<SubFingerprintData> ConvertResults(IEnumerable<SubFingerprintDTO> results)
+        {
             var all = new List<SubFingerprintData>();
             foreach (var dto in results)
             {
-                long[] resultHashBins = dictionaryToHashConverter.FromSolrDictionary(dto.Hashes);
-                byte[] signature = hashConverter.ToBytes(resultHashBins, 100); // TODO refactor, extracting this constant
+                long[] resultHashBins = this.dictionaryToHashConverter.FromSolrDictionary(dto.Hashes);
+                byte[] signature = this.hashConverter.ToBytes(resultHashBins, 100); // TODO refactor, extracting this constant
                 var sub = new SubFingerprintData(
                     signature,
                     dto.SequenceNumber,
@@ -63,11 +85,6 @@
             }
 
             return all;
-        }
-
-        public IEnumerable<SubFingerprintData> ReadSubFingerprintDataByHashBucketsThresholdWithGroupId(long[] hashBuckets, int thresholdVotes, string trackGroupId)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

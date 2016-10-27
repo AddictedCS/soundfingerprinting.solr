@@ -5,14 +5,12 @@
     [TestClass]
     public class SubFingerprintDaoIntTest
     {
-        private SubFingerprintDao dao = new SubFingerprintDao();
+        private readonly SubFingerprintDao subFingerprintDao = new SubFingerprintDao();
 
         [TestMethod]
         public void ShouldInsertSubFingerprintToSolrWithoutTheHash()
         {
-            var subReference = this.dao.InsertSubFingerprint(new byte[0], 1, 0d, new SolrModelReference("track-id"));
-
-            Assert.IsNotNull(subReference.Id);
+            //
         }
     }
 }

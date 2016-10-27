@@ -1,4 +1,4 @@
-﻿namespace SoundFingerprinting.Solr.Test
+﻿namespace SoundFingerprinting.Solr.Tests
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -6,36 +6,25 @@
     using Microsoft.Practices.ServiceLocation;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-    using Ninject;
-
     using SolrNet;
 
+    using SoundFingerprinting.Infrastructure;
     using SoundFingerprinting.Solr.DAO;
-    using SoundFingerprinting.Solr.Infrastructure;
 
     [TestClass]
     public class SolrIntTest
     {
-        private static readonly SolrModuleLoader ModuleLoader = new SolrModuleLoader();
-        private static readonly StandardKernel Kernel = new StandardKernel();
-
-        [ClassInitialize]
-        public static void SetUp(TestContext context)
-        {
-            ModuleLoader.LoadAssemblyBindings(Kernel);
-        }
-
         [TestMethod]
         public void SolrServerIsAccessible()
         {
-            var solr = ServiceLocator.Current.GetInstance<ISolrOperations<SubFingerprintDTO>>();
+            var solr = DependencyResolver.Current.Get<ISolrOperations<SubFingerprintDTO>>();
             solr.Ping();
         }
 
         [TestMethod]
         public void SolrServerCanStoreSubFingerprints()
         {
-            var solr = ServiceLocator.Current.GetInstance<ISolrOperations<SubFingerprintDTO>>();
+            var solr = DependencyResolver.Current.Get<ISolrOperations<SubFingerprintDTO>>();
 
             solr.Add(
                 new SubFingerprintDTO
@@ -49,7 +38,7 @@
             var docs = solr.Query("subFingerprintId:321");
 
             Assert.AreEqual(1, docs.Count);
-            TearDownDocs(solr, docs);
+            this.TearDownDocs(solr, docs);
         }
 
         [TestMethod]
@@ -82,7 +71,7 @@
             var result = docs.First();
             Assert.AreEqual(doc2.SubFingerprintId, result.SubFingerprintId);
 
-            TearDownDocs(solr, new List<SubFingerprintDTO> { doc1, doc2 });
+            this.TearDownDocs(solr, new List<SubFingerprintDTO> { doc1, doc2 });
         }
 
         private void TearDownDocs(ISolrOperations<SubFingerprintDTO> solr, IEnumerable<SubFingerprintDTO> subFingerprintDtos)

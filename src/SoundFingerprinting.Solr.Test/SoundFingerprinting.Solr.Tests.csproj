@@ -45,10 +45,10 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="AbstractSolrIntegrationTest.cs" />
+    <Compile Include="IntegrationTestWithSampleFiles.cs" />
     <Compile Include="DictionaryToHashConverterTest.cs" />
+    <Compile Include="FingerprintCommandBuilderIntTest.cs" />
     <Compile Include="HashConverterTest.cs" />
-    <Compile Include="Empty.cs" />
     <Compile Include="SolrIntTest.cs" />
     <Compile Include="SolrModelServiceIntTest.cs" />
     <Compile Include="SolrQueryBuilderTest.cs" />

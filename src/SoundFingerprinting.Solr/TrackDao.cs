@@ -13,15 +13,20 @@
 
     internal class TrackDao : ITrackDao
     {
-        private readonly ISolrOperations<TrackDTO> solr;
+        private readonly ISolrOperations<TrackDTO> solrForTracksCore;
+        private readonly ISolrOperations<SubFingerprintDTO> solrForSubfingerprintsCore;
 
-        public TrackDao() : this(DependencyResolver.Current.Get<ISolrOperations<TrackDTO>>())
+        public TrackDao()
+            : this(
+                DependencyResolver.Current.Get<ISolrOperations<TrackDTO>>(),
+                DependencyResolver.Current.Get<ISolrOperations<SubFingerprintDTO>>())
         {
         }
 
-        protected TrackDao(ISolrOperations<TrackDTO> solr)
+        protected TrackDao(ISolrOperations<TrackDTO> solrForTracksCore, ISolrOperations<SubFingerprintDTO> solrForSubfingerprintsCore)
         {
-            this.solr = solr;
+            this.solrForTracksCore = solrForTracksCore;
+            this.solrForSubfingerprintsCore = solrForSubfingerprintsCore;
         }
 
         public IModelReference InsertTrack(TrackData track)
@@ -39,8 +44,8 @@
                     TrackLengthSec = track.TrackLengthSec
                 };
 
-            solr.Add(dto);
-            solr.Commit();
+            this.solrForTracksCore.Add(dto);
+            this.solrForTracksCore.Commit();
             return new SolrModelReference(id.ToString());
         }
 
@@ -49,28 +54,29 @@
             var trackId = SolrModelReference.GetId(trackReference);
             var query = new SolrQuery(string.Format("trackId:{0}", trackId));
 
-            var results = solr.Query(query);
+            var results = this.solrForTracksCore.Query(query);
             return FirstFromResultSet(results);
         }
 
         public int DeleteTrack(IModelReference trackReference)
         {
-            solr.Delete(SolrModelReference.GetId(trackReference));
-            solr.Commit();
-            return 1;
+            int subIds = this.DeleteSubFingerprintsForTrack(trackReference);
+            this.solrForTracksCore.Delete(SolrModelReference.GetId(trackReference));
+            this.solrForTracksCore.Commit();
+            return 1 + subIds;
         }
 
         public IList<TrackData> ReadTrackByArtistAndTitleName(string artist, string title)
         {
             var query = new SolrQuery(string.Format("title:{0} AND artist:{1}", title, artist));
-            var results = solr.Query(query);
+            var results = this.solrForTracksCore.Query(query);
             return AllFromResultSet(results);
         }
         
         public TrackData ReadTrackByISRC(string isrc)
         {
             var query = new SolrQuery(string.Format("isrc:{0}", isrc));
-            var results = solr.Query(query);
+            var results = this.solrForTracksCore.Query(query);
 
             return FirstFromResultSet(results);
         }
@@ -78,11 +84,22 @@
         public IList<TrackData> ReadAll()
         {
             var query = new SolrQuery("*:*");
-            var results = solr.Query(query);
+            var results = this.solrForTracksCore.Query(query);
             return AllFromResultSet(results);
         }
 
-        private static TrackData Convert(TrackDTO dto)
+        private int DeleteSubFingerprintsForTrack(IModelReference trackReference)
+        {
+            string trackId = SolrModelReference.GetId(trackReference);
+            string readAll = string.Format("trackId:{0}", trackId);
+            var results = solrForSubfingerprintsCore.Query(new SolrQuery(readAll));
+            var ids = results.Select(dto => dto.SubFingerprintId).ToList();
+            solrForSubfingerprintsCore.Delete(ids);
+            solrForSubfingerprintsCore.Commit();
+            return ids.Count;
+        }
+
+        private TrackData Convert(TrackDTO dto)
         {
             var track = new TrackData(
                 dto.ISRC,
@@ -95,7 +112,7 @@
             return track;
         }
 
-        private static TrackData FirstFromResultSet(ICollection<TrackDTO> results)
+        private TrackData FirstFromResultSet(ICollection<TrackDTO> results)
         {
             if (results.Count > 0)
             {
@@ -106,7 +123,7 @@
             return default(TrackData);
         }
 
-        private static IList<TrackData> AllFromResultSet(ICollection<TrackDTO> results)
+        private IList<TrackData> AllFromResultSet(ICollection<TrackDTO> results)
         {
             if (results.Count == 0)
             {

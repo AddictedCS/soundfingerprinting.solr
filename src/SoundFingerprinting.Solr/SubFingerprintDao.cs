@@ -1,6 +1,7 @@
 ﻿namespace SoundFingerprinting.Solr
 {
     using System;
+    using System.Linq;
 
     using SolrNet;
 
@@ -44,5 +45,7 @@
             this.solr.Commit();
             return new SolrModelReference(subId.ToString());
         }
+
+        
     }
 }

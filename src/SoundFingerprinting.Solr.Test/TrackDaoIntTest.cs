@@ -154,57 +154,6 @@
             Assert.IsTrue(trackDao.ReadAll().Count == 0);
         }
 
- /*       [TestMethod]
-        public void DeleteHashBinsAndSubfingerprintsOnTrackDelete()
-        {
-            const int StaticStride = 5115;
-            const int SecondsToProcess = 20;
-            const int StartAtSecond = 30;
-
-            var tagInfo = GetTagInfo();
-            int releaseYear = tagInfo.Year;
-            TrackData track = new TrackData(
-                tagInfo.ISRC, tagInfo.Artist, tagInfo.Title, tagInfo.Album, releaseYear, (int)tagInfo.Duration);
-            var trackReference = trackDao.InsertTrack(track);
-            var hashData =
-                fingerprintCommandBuilder.BuildFingerprintCommand().From(PathToMp3, SecondsToProcess, StartAtSecond).
-                    WithFingerprintConfig(
-                        config =>
-                            {
-                                config.SpectrogramConfig.Stride = new IncrementalStaticStride(
-                                    StaticStride, config.SamplesPerFingerprint);
-                            }).UsingServices(audioService).Hash().
-                    Result;
-
-            var subFingerprintReferences = new List<IModelReference>();
-            foreach (var hash in hashData)
-            {
-                var subFingerprintReference = subFingerprintDao.InsertSubFingerprint(
-                    hash.SubFingerprint, hash.SequenceNumber, hash.Timestamp, trackReference);
-                hashBinDao.InsertHashBins(hash.HashBins, subFingerprintReference, trackReference);
-                subFingerprintReferences.Add(subFingerprintReference);
-            }
-
-            var actualTrack = trackDao.ReadTrackByISRC(tagInfo.ISRC);
-            Assert.IsNotNull(actualTrack);
-            AssertTracksAreEqual(track, actualTrack);
-
-            // Act
-            int modifiedRows = trackDao.DeleteTrack(trackReference);
-
-            Assert.IsNull(trackDao.ReadTrackByISRC(tagInfo.ISRC));
-            foreach (var id in subFingerprintReferences)
-            {
-                Assert.IsTrue(id.GetHashCode() != 0);
-                Assert.IsNull(subFingerprintDao.ReadSubFingerprint(id));
-            }
-
-            Assert.IsTrue(hashBinDao.ReadHashedFingerprintsByTrackReference(actualTrack.TrackReference).Count == 0);
-            Assert.AreEqual(
-                1 + hashData.Count + (FingerprintConfiguration.Default.HashingConfig.NumberOfLSHTables * hashData.Count),
-                modifiedRows);
-        } */
-
         [TestMethod]
         public void InserTrackShouldAcceptEmptyEntriesCodes()
         {
