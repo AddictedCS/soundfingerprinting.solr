@@ -109,6 +109,8 @@
         public void ReadTrackByArtistAndTitleTest()
         {
             var track = GetRandomTrack();
+            track.Artist = "This is a long artist name";
+            track.Title = "This is a long title name";
             trackDao.InsertTrack(track);
 
             var tracks = trackDao.ReadTrackByArtistAndTitleName(track.Artist, track.Title);

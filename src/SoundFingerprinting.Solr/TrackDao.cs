@@ -68,7 +68,7 @@
 
         public IList<TrackData> ReadTrackByArtistAndTitleName(string artist, string title)
         {
-            var query = new SolrQuery(string.Format("title:{0} AND artist:{1}", title, artist));
+            var query = new SolrQuery(string.Format("title:\"{0}\" AND artist:\"{1}\"", title, artist));
             var results = this.solrForTracksCore.Query(query);
             return AllFromResultSet(results);
         }
