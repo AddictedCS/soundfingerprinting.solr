@@ -1,10 +1,13 @@
 ﻿namespace SoundFingerprinting.Solr.Tests
 {
     using System.Collections.Generic;
+    using System.Configuration;
     using System.Linq;
 
     using Microsoft.Practices.ServiceLocation;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    using Ninject.Integration.SolrNet.Config;
 
     using SolrNet;
 
@@ -72,6 +75,22 @@
             Assert.AreEqual(doc2.SubFingerprintId, result.SubFingerprintId);
 
             this.TearDownDocs(solr, new List<SubFingerprintDTO> { doc1, doc2 });
+        }
+
+        [TestMethod]
+        public void ShouldReadConfigurationEntriesFromConfigFile()
+        {
+            var config = (SolrConfigurationSection)ConfigurationManager.GetSection("solr");
+
+            Assert.IsNotNull(config);
+        }
+
+        [TestMethod]
+        public void ShouldLoadConfigEntriesInNinjectKernel()
+        {
+            var solr = DependencyResolver.Current.Get<ISolrOperations<TrackDTO>>();
+
+            Assert.IsNotNull(solr);
         }
 
         private void TearDownDocs(ISolrOperations<SubFingerprintDTO> solr, IEnumerable<SubFingerprintDTO> subFingerprintDtos)

@@ -109,6 +109,10 @@
       <HintPath>..\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Ninject.Integration.SolrNet, Version=0.5.0.1002, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SolrNet.Ninject.0.5.0-alpha2\lib\Ninject.Integration.SolrNet.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="SolrNet, Version=0.5.0.1002, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SolrNet.0.5.0-alpha2\lib\SolrNet.dll</HintPath>
       <Private>True</Private>
