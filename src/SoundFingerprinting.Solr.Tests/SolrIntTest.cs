@@ -61,7 +61,7 @@
                     Hashes = new Dictionary<int, long> { { 1, 10 }, { 2, 11 }, { 3, 20 }, { 4, 21 }, { 5, 22 } }
                 };
 
-            var solr = ServiceLocator.Current.GetInstance<ISolrOperations<SubFingerprintDTO>>();
+            var solr = DependencyResolver.Current.Get<ISolrOperations<SubFingerprintDTO>>();
 
             solr.Add(doc1);
             solr.Add(doc2);
