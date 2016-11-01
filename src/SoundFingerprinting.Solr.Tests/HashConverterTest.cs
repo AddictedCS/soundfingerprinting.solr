@@ -4,6 +4,8 @@
 
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    using SoundFingerprinting.Solr.Converters;
+
     [TestClass]
     public class HashConverterTest
     {

@@ -4,7 +4,6 @@
     using System.Configuration;
     using System.Linq;
 
-    using Microsoft.Practices.ServiceLocation;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     using Ninject.Integration.SolrNet.Config;
@@ -88,9 +87,11 @@
         [TestMethod]
         public void ShouldLoadConfigEntriesInNinjectKernel()
         {
-            var solr = DependencyResolver.Current.Get<ISolrOperations<TrackDTO>>();
+            var solrForTracks = DependencyResolver.Current.Get<ISolrOperations<TrackDTO>>();
+            var solrForSubFingerprints = DependencyResolver.Current.Get<ISolrOperations<SubFingerprintDTO>>();
 
-            Assert.IsNotNull(solr);
+            Assert.IsNotNull(solrForTracks);
+            Assert.IsNotNull(solrForSubFingerprints);
         }
 
         private void TearDownDocs(ISolrOperations<SubFingerprintDTO> solr, IEnumerable<SubFingerprintDTO> subFingerprintDtos)

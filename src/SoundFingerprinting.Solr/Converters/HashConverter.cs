@@ -1,8 +1,8 @@
-﻿namespace SoundFingerprinting.Solr
+﻿namespace SoundFingerprinting.Solr.Converters
 {
     using System;
 
-    internal class HashConverter
+    internal class HashConverter : IHashConverter
     {
         public byte[] ToBytes(long[] array, int count)
         {

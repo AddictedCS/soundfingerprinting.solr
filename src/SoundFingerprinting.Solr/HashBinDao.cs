@@ -10,6 +10,7 @@
     using SoundFingerprinting.DAO.Data;
     using SoundFingerprinting.Data;
     using SoundFingerprinting.Infrastructure;
+    using SoundFingerprinting.Solr.Converters;
     using SoundFingerprinting.Solr.DAO;
 
     internal class HashBinDao : IHashBinDao
@@ -40,7 +41,7 @@
                 var dto = new SubFingerprintDTO
                 {
                     SubFingerprintId = subId.ToString(),
-                    Hashes = dictionaryToHashConverter.FromHashes(hash.HashBins),
+                    Hashes = dictionaryToHashConverter.FromHashesToSolrDictionary(hash.HashBins),
                     SequenceAt = hash.Timestamp,
                     SequenceNumber = hash.SequenceNumber,
                     TrackId = SolrModelReference.GetId(trackReference)
@@ -54,7 +55,7 @@
 
         public void InsertHashBins(long[] hashBins, IModelReference subFingerprintReference, IModelReference trackReference)
         {
-            var hashTables = dictionaryToHashConverter.FromHashes(hashBins);
+            var hashTables = dictionaryToHashConverter.FromHashesToSolrDictionary(hashBins);
             solr.Add(
                 new SubFingerprintDTO
                     {
@@ -72,7 +73,7 @@
             var fingerprints = new List<HashedFingerprint>();
             foreach (var subFingerprintDto in results)
             {
-                long[] resultHashBins = dictionaryToHashConverter.FromSolrDictionary(subFingerprintDto.Hashes);
+                long[] resultHashBins = dictionaryToHashConverter.FromSolrDictionaryToHashes(subFingerprintDto.Hashes);
                 byte[] signature = hashConverter.ToBytes(resultHashBins, 100); // TODO refactor, extracting this constant 
                 var fingerprint = new HashedFingerprint(signature, resultHashBins, subFingerprintDto.SequenceNumber, subFingerprintDto.SequenceAt);
                 fingerprints.Add(fingerprint);
@@ -83,7 +84,7 @@
 
         public IEnumerable<SubFingerprintData> ReadSubFingerprintDataByHashBucketsWithThreshold(long[] hashBins, int thresholdVotes)
         {
-            string queryString = solrQueryBuilder.BuildReadQueryFor(hashBins, thresholdVotes);
+            string queryString = solrQueryBuilder.BuildReadQueryForHashesAndThreshold(hashBins, thresholdVotes);
             var results = solr.Query(new SolrQuery(queryString));
             return ConvertResults(results);
         }
@@ -93,7 +94,7 @@
         // Make it functional in 3.x
         public IEnumerable<SubFingerprintData> ReadSubFingerprintDataByHashBucketsThresholdWithGroupId(long[] hashBins, int thresholdVotes, string trackGroupId)
         {
-            string queryString = solrQueryBuilder.BuildReadQueryFor(hashBins, thresholdVotes);
+            string queryString = solrQueryBuilder.BuildReadQueryForHashesAndThreshold(hashBins, thresholdVotes);
             var results = solr.Query(
                 new SolrQuery(queryString),
                 new QueryOptions 
@@ -112,7 +113,7 @@
             var all = new List<SubFingerprintData>();
             foreach (var dto in results)
             {
-                long[] resultHashBins = dictionaryToHashConverter.FromSolrDictionary(dto.Hashes);
+                long[] resultHashBins = dictionaryToHashConverter.FromSolrDictionaryToHashes(dto.Hashes);
                 byte[] signature = hashConverter.ToBytes(resultHashBins, 100); // TODO refactor, extracting this constant
                 var sub = new SubFingerprintData(
                     signature,
