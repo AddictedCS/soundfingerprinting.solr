@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
 
     using SolrNet;
@@ -73,8 +74,19 @@
 
         public IEnumerable<SubFingerprintData> ReadSubFingerprintDataByHashBucketsWithThreshold(long[] hashBins, int thresholdVotes)
         {
-            string queryString = solrQueryBuilder.BuildReadQueryForHashesAndThreshold(hashBins, thresholdVotes);
-            var results = solr.Query(new SolrQuery(queryString));
+            string queryString = solrQueryBuilder.BuildReadQueryForHashesAndThresholdEDismax(hashBins, thresholdVotes);
+            var results = solr.Query(
+                new SolrQuery(queryString),
+                new QueryOptions
+                    {
+                        ExtraParams =
+                            new Dictionary<string, string>()
+                                {
+                                    { "defType", "edismax" },
+                                    { "mm", thresholdVotes.ToString(CultureInfo.InvariantCulture) }
+                                }
+                    });
+
             return ConvertResults(results);
         }
 

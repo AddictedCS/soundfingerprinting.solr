@@ -13,6 +13,12 @@
             return queryString;
         }
 
+        public string BuildReadQueryForHashesAndThresholdEDismax(long[] hashBins, int thresholdVotes)
+        {
+            List<string> terms = hashBins.Select((hash, index) => string.Format("hashTable_{0}:{1}", index, hash)).ToList();
+            return string.Join(" ", terms);
+        }
+
         public string BuildReadQueryForTitleAndArtist(string title, string artist)
         {
             string query = string.Format(
