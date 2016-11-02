@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     using SolrNet;
     using SolrNet.Commands.Parameters;
@@ -35,21 +36,9 @@
         // SQL and SOLR will be adapted to the same high throughput interface
         public void InsertHashDataForTrack(IEnumerable<HashedFingerprint> hashes, IModelReference trackReference)
         {
-            foreach (HashedFingerprint hash in hashes)
-            {
-                Guid subId = Guid.NewGuid();
-                var dto = new SubFingerprintDTO
-                {
-                    SubFingerprintId = subId.ToString(),
-                    Hashes = dictionaryToHashConverter.FromHashesToSolrDictionary(hash.HashBins),
-                    SequenceAt = hash.Timestamp,
-                    SequenceNumber = hash.SequenceNumber,
-                    TrackId = SolrModelReference.GetId(trackReference)
-                };
-
-                solr.Add(dto);
-            }
-
+            var dtos = hashes.Select(hash => new SubFingerprintDTO { SubFingerprintId = Guid.NewGuid().ToString(), Hashes = this.dictionaryToHashConverter.FromHashesToSolrDictionary(hash.HashBins), SequenceAt = hash.Timestamp, SequenceNumber = hash.SequenceNumber, TrackId = SolrModelReference.GetId(trackReference) })
+                             .ToList();
+            solr.AddRange(dtos);
             solr.Commit();
         }
 
