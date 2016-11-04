@@ -109,6 +109,13 @@
             return ConvertResults(results);
         }
 
+        public ISet<SubFingerprintData> ReadAllSubFingerprintCandidatesWithThreshold(IEnumerable<HashedFingerprint> hashes, int threshold)
+        {
+            string queryString = solrQueryBuilder.BuildQueryForHashes(hashes, threshold);
+            var results = solr.Query(queryString);
+            return new HashSet<SubFingerprintData>(ConvertResults(results));
+        }
+
         private IEnumerable<SubFingerprintData> ConvertResults(IEnumerable<SubFingerprintDTO> results)
         {
             var all = new List<SubFingerprintData>();
