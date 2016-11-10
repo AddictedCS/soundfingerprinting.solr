@@ -32,7 +32,10 @@
 
             modelService.InsertHashDataForTrack(hashDatas, trackReference);
 
-            var queryResult = queryFingerprintService.QueryWithTimeSequenceInformation(modelService, hashDatas, new DefaultQueryConfiguration());
+            var defaultQueryConfiguration = new DefaultQueryConfiguration();
+            defaultQueryConfiguration.FingerprintConfiguration = new DefaultFingerprintConfiguration();
+            
+            var queryResult = queryFingerprintService.Query(modelService, hashDatas, defaultQueryConfiguration);
 
             Assert.IsTrue(queryResult.IsSuccessful);
             Assert.AreEqual(1, queryResult.ResultEntries.Count);

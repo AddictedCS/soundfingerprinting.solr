@@ -90,9 +90,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Converters\DictionaryToHashConverter.cs" />
-    <Compile Include="Converters\HashConverter.cs" />
     <Compile Include="Converters\IDictionaryToHashConverter.cs" />
-    <Compile Include="Converters\IHashConverter.cs" />
     <Compile Include="DAO\TrackDTO.cs" />
     <Compile Include="FingerprintDao.cs" />
     <Compile Include="HashBinDao.cs" />

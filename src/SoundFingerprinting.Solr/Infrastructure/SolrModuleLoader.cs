@@ -13,6 +13,7 @@
     using SolrNet.Impl;
 
     using SoundFingerprinting.Infrastructure;
+    using SoundFingerprinting.Math;
     using SoundFingerprinting.Solr.Converters;
 
     public class SolrModuleLoader : IModuleLoader
@@ -22,7 +23,6 @@
             var solrConfig = (SolrConfigurationSection)ConfigurationManager.GetSection("solr");
             kernel.Load(new SolrNetModule(solrConfig.SolrServers));
 
-            kernel.Bind<IHashConverter>().To<HashConverter>();
             kernel.Bind<IDictionaryToHashConverter>().To<DictionaryToHashConverter>();
             kernel.Bind<ISolrQueryBuilder>().To<SolrQueryBuilder>();
 
