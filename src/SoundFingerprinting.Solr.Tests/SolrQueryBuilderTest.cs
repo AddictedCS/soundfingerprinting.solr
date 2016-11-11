@@ -15,7 +15,7 @@
 
             string query = qb.BuildReadQueryForHashesAndThreshold(hashes, Threshold);
 
-            Assert.AreEqual("{!frange l=3 u=5}sum(termfreq(hashTable_0,'10'),termfreq(hashTable_1,'11'),termfreq(hashTable_2,'12'),termfreq(hashTable_3,'21'),termfreq(hashTable_4,'22'))", query);
+            Assert.AreEqual("hashTable_0:10 hashTable_1:11 hashTable_2:12 hashTable_3:21 hashTable_4:22", query);
         }
 
         [TestMethod]

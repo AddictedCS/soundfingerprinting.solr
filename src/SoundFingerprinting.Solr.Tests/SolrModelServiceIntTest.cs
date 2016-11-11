@@ -4,6 +4,7 @@
 
     using SoundFingerprinting.Audio.NAudio;
     using SoundFingerprinting.Builder;
+    using SoundFingerprinting.Configuration;
     using SoundFingerprinting.DAO.Data;
     using SoundFingerprinting.Data;
     using SoundFingerprinting.Strides;
@@ -44,7 +45,6 @@
         [TestMethod]
         public void ShouldReadSubFingerprintsByHashBucketsHavingThreshold()
         {
-            const int Threshold = 5;
             TrackData firstTrack = new TrackData("isrc1", "artist", "title", "album", 1986, 200);
             var firstTrackReference = modelService.InsertTrack(firstTrack);
             TrackData secondTrack = new TrackData("isrc2", "artist", "title", "album", 1986, 200);
@@ -69,7 +69,7 @@
                     3, 2, 5, 6, 7, 8, 7, 10, 11, 12, 13, 14, 15, 14, 17, 18, 19, 20, 21, 20, 23, 24, 25, 26, 25 
                 };
 
-            var subFingerprints = modelService.ReadSubFingerprintDataByHashBucketsWithThreshold(queryBuckets, Threshold);
+            var subFingerprints = modelService.ReadSubFingerprints(queryBuckets, new DefaultQueryConfiguration());
 
             Assert.IsTrue(subFingerprints.Count == 1);
             Assert.AreEqual(firstTrackReference, subFingerprints[0].TrackReference);

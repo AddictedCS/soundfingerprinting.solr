@@ -13,6 +13,6 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 [assembly: Guid("5c58308b-745e-4d08-8435-3e3751c42390")]
 [assembly: AssemblyInformationalVersion("2.3.3-alpha")]
-[assembly: AssemblyVersion("2.3.3")]
-[assembly: AssemblyFileVersion("2.3.3")]
+[assembly: AssemblyVersion("3.0.0")]
+[assembly: AssemblyFileVersion("3.0.0")]
 [assembly: InternalsVisibleTo("SoundFingerprinting.Solr.Tests")]
