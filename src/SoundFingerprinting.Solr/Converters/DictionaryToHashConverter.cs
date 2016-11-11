@@ -1,18 +1,18 @@
-﻿namespace SoundFingerprinting.Solr
+﻿namespace SoundFingerprinting.Solr.Converters
 {
     using System.Collections.Generic;
     using System.Linq;
 
-    internal class DictionaryToHashConverter
+    internal class DictionaryToHashConverter : IDictionaryToHashConverter
     {
-        public Dictionary<int, long> FromHashes(long[] hashBins)
+        public Dictionary<int, long> FromHashesToSolrDictionary(long[] hashBins)
         {
             var hashTables = hashBins.Select((hash, index) => new { index, hash }).ToDictionary(
                 x => x.index, x => x.hash);
             return hashTables;
         }
 
-        public long[] FromSolrDictionary(IDictionary<int, long> hashTables)
+        public long[] FromSolrDictionaryToHashes(IDictionary<int, long> hashTables)
         {
             long[] hashBins = new long[hashTables.Count];
             foreach (var hashTable in hashTables)

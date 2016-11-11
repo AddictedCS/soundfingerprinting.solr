@@ -15,18 +15,24 @@
     {
         private readonly ISolrOperations<TrackDTO> solrForTracksCore;
         private readonly ISolrOperations<SubFingerprintDTO> solrForSubfingerprintsCore;
+        private readonly ISolrQueryBuilder solrQueryBuilder;
 
         public TrackDao()
             : this(
                 DependencyResolver.Current.Get<ISolrOperations<TrackDTO>>(),
-                DependencyResolver.Current.Get<ISolrOperations<SubFingerprintDTO>>())
+                DependencyResolver.Current.Get<ISolrOperations<SubFingerprintDTO>>(),
+                DependencyResolver.Current.Get<ISolrQueryBuilder>())
         {
         }
 
-        protected TrackDao(ISolrOperations<TrackDTO> solrForTracksCore, ISolrOperations<SubFingerprintDTO> solrForSubfingerprintsCore)
+        protected TrackDao(
+            ISolrOperations<TrackDTO> solrForTracksCore,
+            ISolrOperations<SubFingerprintDTO> solrForSubfingerprintsCore,
+            ISolrQueryBuilder solrQueryBuilder)
         {
             this.solrForTracksCore = solrForTracksCore;
             this.solrForSubfingerprintsCore = solrForSubfingerprintsCore;
+            this.solrQueryBuilder = solrQueryBuilder;
         }
 
         public IModelReference InsertTrack(TrackData track)
@@ -68,7 +74,7 @@
 
         public IList<TrackData> ReadTrackByArtistAndTitleName(string artist, string title)
         {
-            var query = new SolrQuery(string.Format("title:{0} AND artist:{1}", title, artist));
+            var query = solrQueryBuilder.BuildReadQueryForTitleAndArtist(title, artist);
             var results = this.solrForTracksCore.Query(query);
             return AllFromResultSet(results);
         }
@@ -77,7 +83,6 @@
         {
             var query = new SolrQuery(string.Format("isrc:{0}", isrc));
             var results = this.solrForTracksCore.Query(query);
-
             return FirstFromResultSet(results);
         }
 

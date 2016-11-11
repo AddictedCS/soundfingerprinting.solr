@@ -1,10 +1,12 @@
 ﻿namespace SoundFingerprinting.Solr.Tests
 {
     using System.Collections.Generic;
+    using System.Configuration;
     using System.Linq;
 
-    using Microsoft.Practices.ServiceLocation;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    using Ninject.Integration.SolrNet.Config;
 
     using SolrNet;
 
@@ -58,7 +60,7 @@
                     Hashes = new Dictionary<int, long> { { 1, 10 }, { 2, 11 }, { 3, 20 }, { 4, 21 }, { 5, 22 } }
                 };
 
-            var solr = ServiceLocator.Current.GetInstance<ISolrOperations<SubFingerprintDTO>>();
+            var solr = DependencyResolver.Current.Get<ISolrOperations<SubFingerprintDTO>>();
 
             solr.Add(doc1);
             solr.Add(doc2);
@@ -72,6 +74,24 @@
             Assert.AreEqual(doc2.SubFingerprintId, result.SubFingerprintId);
 
             this.TearDownDocs(solr, new List<SubFingerprintDTO> { doc1, doc2 });
+        }
+
+        [TestMethod]
+        public void ShouldReadConfigurationEntriesFromConfigFile()
+        {
+            var config = (SolrConfigurationSection)ConfigurationManager.GetSection("solr");
+
+            Assert.IsNotNull(config);
+        }
+
+        [TestMethod]
+        public void ShouldLoadConfigEntriesInNinjectKernel()
+        {
+            var solrForTracks = DependencyResolver.Current.Get<ISolrOperations<TrackDTO>>();
+            var solrForSubFingerprints = DependencyResolver.Current.Get<ISolrOperations<SubFingerprintDTO>>();
+
+            Assert.IsNotNull(solrForTracks);
+            Assert.IsNotNull(solrForSubFingerprints);
         }
 
         private void TearDownDocs(ISolrOperations<SubFingerprintDTO> solr, IEnumerable<SubFingerprintDTO> subFingerprintDtos)

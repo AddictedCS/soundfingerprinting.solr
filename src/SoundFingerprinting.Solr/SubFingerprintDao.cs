@@ -45,7 +45,5 @@
             this.solr.Commit();
             return new SolrModelReference(subId.ToString());
         }
-
-        
     }
 }

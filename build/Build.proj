@@ -1,0 +1,40 @@
+<Project DefaultTargets="All" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	
+	<PropertyGroup>
+	  <Configuration Condition="$(Configuration) == ''">Release</Configuration>
+	  <SolutionFile>..\src\SoundFingerprinting.Solr.sln</SolutionFile>
+	  <NugetExecutable>..\src\.nuget\NuGet.exe</NugetExecutable>
+	  <MSTestExecutable>..\tools\MSTest.exe</MSTestExecutable>
+	  <SoundFingerprintingSolrProject>..\src\SoundFingerprinting.Solr\SoundFingerprinting.Solr.csproj</SoundFingerprintingSolrProject>
+	  <UnitTestsOutputDir>$(Configuration)\UnitTests</UnitTestsOutputDir>
+	</PropertyGroup>
+
+	<Target Name = "Compile">
+		<MSBuild Projects="$(SolutionFile)" Properties="Configuration=$(Configuration)" />
+		<Message Text="Copying Tests files to output directories" />
+		<MakeDir Directories="$(UnitTestsOutputDir)" Condition="!Exists('$(UnitTestsOutputDir)')" />
+		
+		<CreateItem Include="..\src\SoundFingerprinting.Solr.Tests\bin\$(Configuration)\**\*.*">
+			<Output TaskParameter="Include" ItemName="UnitTestFiles" />
+		</CreateItem>
+		
+		<Copy SourceFiles="@(UnitTestFiles)" DestinationFiles="@(UnitTestFiles->'$(UnitTestsOutputDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+	</Target>
+
+	<Target Name = "RunSolrTests">
+		<Exec Command="$(MSTestExecutable) /testcontainer:$(UnitTestsOutputDir)\SoundFingerprinting.Solr.Tests.dll" >
+			<Output TaskParameter="ExitCode" PropertyName="TestSuccessOrNot"/>
+		</Exec>
+	</Target>
+
+	<Target Name = "PackageSolrLib" DependsOnTargets="RunSolrTests">
+		<Exec Command="&quot;$(NugetExecutable)&quot; pack $(SoundFingerprintingSolrProject) -Build -Properties Configuration=$(Configuration)" />
+	</Target>
+
+	<Target Name = "Package" DependsOnTargets="PackageSolrLib">
+		<RemoveDir Directories="TestResults" />
+	</Target>
+
+	<Target Name = "All" DependsOnTargets="Compile;Package" />
+
+</Project>
