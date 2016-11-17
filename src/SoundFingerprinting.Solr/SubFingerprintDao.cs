@@ -50,7 +50,7 @@
                         {
                             SubFingerprintId = Guid.NewGuid().ToString(),
                             Hashes = dictionaryToHashConverter.FromHashesToSolrDictionary(hash.HashBins),
-                            SequenceAt = hash.Timestamp,
+                            SequenceAt = hash.StartsAt,
                             SequenceNumber = hash.SequenceNumber,
                             TrackId = SolrModelReference.GetId(trackReference)
                         }).ToList();
