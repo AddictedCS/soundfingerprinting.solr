@@ -7,7 +7,7 @@
     {
         public string BuildReadQueryForHashesAndThreshold(long[] hashBins, int thresholdVotes)
         {
-            List<string> terms = hashBins.Select((hash, index) => string.Format("hashTable_{0}:{1}", index, hash)).ToList();
+            var terms = hashBins.Select((hash, index) => string.Format("hashTable_{0}:{1}", index, hash)).ToList();
             return string.Join(" ", terms);
         }
 

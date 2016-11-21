@@ -48,8 +48,6 @@
 
             kernel.Bind<ISolrConnection>().ToConstant<PostSolrConnection>(new PostSolrConnection(fingerprintsConnection, fingerprintsConnection.ServerURL))
                 .WithMetadata("CoreId", (object)"fingerprints");
-
-
         }
     }
 }

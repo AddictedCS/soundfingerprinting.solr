@@ -1,5 +1,7 @@
 ﻿namespace SoundFingerprinting.Solr.Tests
 {
+    using System.Linq;
+
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     using SoundFingerprinting.Audio.NAudio;
@@ -26,20 +28,19 @@
             var hashDatas = fingerprintCommandBuilder
                                             .BuildFingerprintCommand()
                                             .From(PathToMp3, SecondsToProcess, StartAtSecond)
-                                            .UsingServices(this.audioService)
+                                            .UsingServices(audioService)
                                             .Hash()
                                             .Result;
 
             modelService.InsertHashDataForTrack(hashDatas, trackReference);
 
             var defaultQueryConfiguration = new DefaultQueryConfiguration();
-            defaultQueryConfiguration.FingerprintConfiguration = new DefaultFingerprintConfiguration();
             
-            var queryResult = queryFingerprintService.Query(modelService, hashDatas, defaultQueryConfiguration);
+            var queryResult = queryFingerprintService.Query(hashDatas, defaultQueryConfiguration, modelService);
 
-            Assert.IsTrue(queryResult.IsSuccessful);
-            Assert.AreEqual(1, queryResult.ResultEntries.Count);
-            Assert.AreEqual(trackReference, queryResult.ResultEntries[0].Track.TrackReference);
+            Assert.IsTrue(queryResult.ContainsMatches);
+            Assert.AreEqual(1, queryResult.ResultEntries.Count());
+            Assert.AreEqual(trackReference, queryResult.BestMatch.Track.TrackReference);
         }
     }
 }
