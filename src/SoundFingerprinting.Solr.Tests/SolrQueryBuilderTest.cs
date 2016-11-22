@@ -11,9 +11,8 @@
         public void ShouldBuildReadWithThresholdsQuery()
         {
             long[] hashes = new long[] { 10, 11, 12, 21, 22 };
-            const int Threshold = 3;
 
-            string query = qb.BuildReadQueryForHashesAndThreshold(hashes, Threshold);
+            string query = qb.BuildReadQueryForHashes(hashes);
 
             Assert.AreEqual("hashTable_0:10 hashTable_1:11 hashTable_2:12 hashTable_3:21 hashTable_4:22", query);
         }

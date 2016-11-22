@@ -7,8 +7,8 @@
     {
         public Dictionary<int, long> FromHashesToSolrDictionary(long[] hashBins)
         {
-            var hashTables = hashBins.Select((hash, index) => new { index, hash }).ToDictionary(
-                x => x.index, x => x.hash);
+            var hashTables = hashBins.Select((hash, index) => new { index, hash })
+                                     .ToDictionary(x => x.index, x => x.hash);
             return hashTables;
         }
 

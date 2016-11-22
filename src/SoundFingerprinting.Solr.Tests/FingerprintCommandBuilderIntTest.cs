@@ -11,6 +11,7 @@
 
     [TestFixture]
     [Category("RequiresWindowsDLL")]
+    [Category("IntegrationTest")]
     public class FingerprintCommandBuilderIntTest : IntegrationTestWithSampleFiles
     {
         private readonly FingerprintCommandBuilder fingerprintCommandBuilder = new FingerprintCommandBuilder();

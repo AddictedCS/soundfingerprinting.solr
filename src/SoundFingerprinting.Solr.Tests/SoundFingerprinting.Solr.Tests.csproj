@@ -66,6 +66,10 @@
     <Content Include="TestEnvironment\Kryptonite.mp3" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="NAudio, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Ninject.Integration.SolrNet, Version=0.5.0.1002, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SolrNet.Ninject.0.5.0-alpha2\lib\Ninject.Integration.SolrNet.dll</HintPath>
       <Private>True</Private>

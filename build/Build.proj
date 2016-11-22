@@ -4,14 +4,15 @@
 	  <Configuration Condition="$(Configuration) == ''">Release</Configuration>
 	  <SolutionFile>..\src\SoundFingerprinting.Solr.sln</SolutionFile>
 	  <NugetExecutable>..\src\.nuget\NuGet.exe</NugetExecutable>
-	  <NUnitTestRunner>testrunner\NUnit.ConsoleRunner.3.5.0\tools\nunit3-console.exe</NUnitTestRunner>
+	  <NUnitVersion>3.5.0</NUnitVersion>
+	  <NUnitTestRunner>testrunner\NUnit.ConsoleRunner.$(NUnitVersion)\tools\nunit3-console.exe</NUnitTestRunner>
 	  <SoundFingerprintingSolrProject>..\src\SoundFingerprinting.Solr\SoundFingerprinting.Solr.csproj</SoundFingerprintingSolrProject>
 	  <UnitTestsOutputDir>$(Configuration)\UnitTests</UnitTestsOutputDir>
 	</PropertyGroup>
 
 	<Target Name = "Compile">
 		<MSBuild Projects="$(SolutionFile)" Properties="Configuration=$(Configuration)" />
-		<Message Text="Copying Tests files to output directories" />
+		<Message Text="Copying tests files to output directories" />
 		<MakeDir Directories="$(UnitTestsOutputDir)" Condition="!Exists('$(UnitTestsOutputDir)')" />
 		
 		<CreateItem Include="..\src\SoundFingerprinting.Solr.Tests\bin\$(Configuration)\**\*.*">
@@ -22,7 +23,7 @@
 	</Target>
 	
 	<Target Name = "InstallNUnit3ConsoleRunner">
-	      <Exec Command="&quot;$(NugetExecutable)&quot; install NUnit.Runners -Version 3.5.0 -OutputDirectory testrunner" />
+	    <Exec Command="&quot;$(NugetExecutable)&quot; install NUnit.Runners -Version $(NUnitVersion) -OutputDirectory testrunner" />
 	</Target>
 
 	<Target Name = "RunSolrTests" DependsOnTargets="InstallNUnit3ConsoleRunner">
@@ -35,10 +36,6 @@
 		<Exec Command="&quot;$(NugetExecutable)&quot; pack $(SoundFingerprintingSolrProject) -Build -Properties Configuration=$(Configuration)" />
 	</Target>
 
-	<Target Name = "Package" DependsOnTargets="PackageSolrLib">
-		<RemoveDir Directories="TestResults" />
-	</Target>
-
-	<Target Name = "All" DependsOnTargets="Compile;Package" />
+	<Target Name = "All" DependsOnTargets="Compile;PackageSolrLib" />
 
 </Project>

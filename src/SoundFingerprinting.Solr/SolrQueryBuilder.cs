@@ -5,7 +5,7 @@
 
     internal class SolrQueryBuilder : ISolrQueryBuilder
     {
-        public string BuildReadQueryForHashesAndThreshold(long[] hashBins, int thresholdVotes)
+        public string BuildReadQueryForHashes(long[] hashBins)
         {
             var terms = hashBins.Select((hash, index) => string.Format("hashTable_{0}:{1}", index, hash)).ToList();
             return string.Join(" ", terms);
