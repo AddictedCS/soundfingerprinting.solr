@@ -2,16 +2,16 @@
 {
     using System.Collections.Generic;
 
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using NUnit.Framework;
 
     using SoundFingerprinting.Solr.Converters;
 
-    [TestClass]
+    [TestFixture]
     public class DictionaryToHashConverterTest
     {
         private readonly DictionaryToHashConverter dictionaryToHashConverter = new DictionaryToHashConverter();
 
-        [TestMethod]
+        [Test]
         public void ShouldConvertToAndFrom()
         {
             long[] hashBins = new long[] { 3, 4, 5, 7, 8 };
@@ -24,10 +24,8 @@
             Assert.AreEqual(8, hashTables[4]);
 
             long[] actual = dictionaryToHashConverter.FromSolrDictionaryToHashes(hashTables);
-            for (int i = 0; i < hashBins.Length; ++i)
-            {
-                Assert.AreEqual(hashBins[i], actual[i]);
-            }
+
+            CollectionAssert.AreEqual(hashBins, actual);
         }
     }
 }

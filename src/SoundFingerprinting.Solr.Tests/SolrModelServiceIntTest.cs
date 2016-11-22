@@ -1,6 +1,6 @@
 ﻿namespace SoundFingerprinting.Solr.Tests
 {
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using NUnit.Framework;
 
     using SoundFingerprinting.Audio.NAudio;
     using SoundFingerprinting.Builder;
@@ -9,7 +9,8 @@
     using SoundFingerprinting.Data;
     using SoundFingerprinting.Strides;
 
-    [TestClass]
+    [TestFixture]
+    [Category("RequiresWindowsDLL")]
     public class SolrModelServiceIntTest : IntegrationTestWithSampleFiles
     {
         private readonly SolrModelService modelService = new SolrModelService();
@@ -17,7 +18,7 @@
         private readonly NAudioService audioService = new NAudioService();
         private readonly TrackDao trackDao = new TrackDao();
 
-        [TestCleanup]
+        [TearDown]
         public void TearDown()
         {
             var allTracks = trackDao.ReadAll();
@@ -27,12 +28,12 @@
             }
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldInsertAllSubfingerprintsForTrack()
         {
             var hashedFingerprints = fcb.BuildFingerprintCommand()
                                          .From(PathToMp3)
-                                         .UsingServices(this.audioService)
+                                         .UsingServices(audioService)
                                          .Hash()
                                          .Result;
 
@@ -42,7 +43,7 @@
             modelService.InsertHashDataForTrack(hashedFingerprints, trackReference);
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldReadSubFingerprintsByHashBucketsHavingThreshold()
         {
             TrackData firstTrack = new TrackData("isrc1", "artist", "title", "album", 1986, 200);
@@ -71,11 +72,11 @@
 
             var subFingerprints = modelService.ReadSubFingerprints(queryBuckets, new DefaultQueryConfiguration());
 
-            Assert.IsTrue(subFingerprints.Count == 1);
+            Assert.AreEqual(1, subFingerprints.Count);
             Assert.AreEqual(firstTrackReference, subFingerprints[0].TrackReference);
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldDeleteSubfingerprintsOnTrackDelete()
         {
             const int SecondsToProcess = 20;

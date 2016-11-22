@@ -1,14 +1,11 @@
 ﻿namespace SoundFingerprinting.Solr.Tests
 {
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System.IO;
+    using System.Reflection;
 
-    [DeploymentItem(@"TestEnvironment\floatsamples.bin")]
-    [DeploymentItem(@"TestEnvironment\Kryptonite.mp3")]
-    [DeploymentItem(@"x86", @"x86")]
-    [DeploymentItem(@"x64", @"x64")]
     public abstract class IntegrationTestWithSampleFiles
     {
-        protected string PathToMp3 = "Kryptonite.mp3";
+        protected string PathToMp3 = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Kryptonite.mp3");
 
         protected readonly byte[] GenericSignature = new[]
             {

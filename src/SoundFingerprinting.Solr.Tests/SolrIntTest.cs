@@ -4,26 +4,27 @@
     using System.Configuration;
     using System.Linq;
 
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     using Ninject.Integration.SolrNet.Config;
+
+    using NUnit.Framework;
 
     using SolrNet;
 
     using SoundFingerprinting.Infrastructure;
     using SoundFingerprinting.Solr.DAO;
 
-    [TestClass]
+    [TestFixture]
+    [Category("IntegrationTest")]
     public class SolrIntTest
     {
-        [TestMethod]
+        [Test]
         public void SolrServerIsAccessible()
         {
             var solr = DependencyResolver.Current.Get<ISolrOperations<SubFingerprintDTO>>();
             solr.Ping();
         }
 
-        [TestMethod]
+        [Test]
         public void SolrServerCanStoreSubFingerprints()
         {
             var solr = DependencyResolver.Current.Get<ISolrOperations<SubFingerprintDTO>>();
@@ -43,7 +44,7 @@
             this.TearDownDocs(solr, docs);
         }
 
-        [TestMethod]
+        [Test]
         public void SolrFrameworkCanRunComplexQueries()
         {
             var doc1 = new SubFingerprintDTO
@@ -76,7 +77,7 @@
             this.TearDownDocs(solr, new List<SubFingerprintDTO> { doc1, doc2 });
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldReadConfigurationEntriesFromConfigFile()
         {
             var config = (SolrConfigurationSection)ConfigurationManager.GetSection("solr");
@@ -84,7 +85,7 @@
             Assert.IsNotNull(config);
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldLoadConfigEntriesInNinjectKernel()
         {
             var solrForTracks = DependencyResolver.Current.Get<ISolrOperations<TrackDTO>>();
@@ -96,8 +97,7 @@
 
         private void TearDownDocs(ISolrOperations<SubFingerprintDTO> solr, IEnumerable<SubFingerprintDTO> subFingerprintDtos)
         {
-            solr.Delete(
-                subFingerprintDtos.Select(dto => dto.SubFingerprintId));
+            solr.Delete(subFingerprintDtos.Select(dto => dto.SubFingerprintId));
             solr.Commit();
         }
     }

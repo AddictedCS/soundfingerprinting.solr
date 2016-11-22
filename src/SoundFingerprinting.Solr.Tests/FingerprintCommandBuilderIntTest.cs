@@ -2,14 +2,15 @@
 {
     using System.Linq;
 
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using NUnit.Framework;
 
     using SoundFingerprinting.Audio.NAudio;
     using SoundFingerprinting.Builder;
     using SoundFingerprinting.Configuration;
     using SoundFingerprinting.DAO.Data;
 
-    [TestClass]
+    [TestFixture]
+    [Category("RequiresWindowsDLL")]
     public class FingerprintCommandBuilderIntTest : IntegrationTestWithSampleFiles
     {
         private readonly FingerprintCommandBuilder fingerprintCommandBuilder = new FingerprintCommandBuilder();
@@ -17,7 +18,7 @@
         private readonly SolrModelService modelService = new SolrModelService();
         private readonly NAudioService audioService = new NAudioService();
 
-        [TestMethod]
+        [Test]
         public void ShouldCreateFingerprintsInsertThenQueryAndGetTheRightResult()
         {
             const int SecondsToProcess = 10;

@@ -1,13 +1,13 @@
 ﻿namespace SoundFingerprinting.Solr.Tests
 {
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using NUnit.Framework;
 
-    [TestClass]
+    [TestFixture]
     public class SolrQueryBuilderTest
     {
         private readonly SolrQueryBuilder qb = new SolrQueryBuilder();
 
-        [TestMethod]
+        [Test]
         public void ShouldBuildReadWithThresholdsQuery()
         {
             long[] hashes = new long[] { 10, 11, 12, 21, 22 };
@@ -18,12 +18,10 @@
             Assert.AreEqual("hashTable_0:10 hashTable_1:11 hashTable_2:12 hashTable_3:21 hashTable_4:22", query);
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldBuildArtistAndTitleQuery()
         {
-            string query =
-                qb.BuildReadQueryForTitleAndArtist(
-                    "Piano Sonata No. 2 in \"B-flat minor\", Op. 35: III. Marche funèbre: Lento", "Chopin");
+            string query = qb.BuildReadQueryForTitleAndArtist("Piano Sonata No. 2 in \"B-flat minor\", Op. 35: III. Marche funèbre: Lento", "Chopin");
 
             Assert.AreEqual("title:\"Piano Sonata No. 2 in \\\"B-flat minor\\\", Op. 35: III. Marche funèbre: Lento\" AND artist:\"Chopin\"", query);
         }
