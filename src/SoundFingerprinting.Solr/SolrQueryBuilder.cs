@@ -21,7 +21,7 @@
                 allSubQueries.Add(oneQuery);
             }
 
-            return string.Join(" OR ", allSubQueries);
+            return string.Join(" ", allSubQueries);
         }
 
         public string BuildReadQueryForTitleAndArtist(string title, string artist)
