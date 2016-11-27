@@ -51,6 +51,7 @@
     <Compile Include="SolrIntTest.cs" />
     <Compile Include="SolrModelServiceIntTest.cs" />
     <Compile Include="SolrQueryBuilderTest.cs" />
+    <Compile Include="SubFingerprintDaoTest.cs" />
     <Compile Include="TrackDaoIntTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -66,6 +67,14 @@
     <Content Include="TestEnvironment\Kryptonite.mp3" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Moq, Version=4.5.28.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>..\packages\Moq.4.5.28\lib\net45\Moq.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="NAudio, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>
       <Private>True</Private>
@@ -83,19 +92,19 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="SoundFingerprinting, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SoundFingerprinting.3.0.0-alpha\lib\net45\SoundFingerprinting.dll</HintPath>
+      <HintPath>..\packages\SoundFingerprinting.3.0.0-beta\lib\net45\SoundFingerprinting.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="SoundFingerprinting.Audio, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SoundFingerprinting.3.0.0-alpha\lib\net45\SoundFingerprinting.Audio.dll</HintPath>
+      <HintPath>..\packages\SoundFingerprinting.3.0.0-beta\lib\net45\SoundFingerprinting.Audio.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="SoundFingerprinting.Audio.NAudio, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SoundFingerprinting.3.0.0-alpha\lib\net45\SoundFingerprinting.Audio.NAudio.dll</HintPath>
+      <HintPath>..\packages\SoundFingerprinting.3.0.0-beta\lib\net45\SoundFingerprinting.Audio.NAudio.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="SoundFingerprinting.Infrastructure, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SoundFingerprinting.3.0.0-alpha\lib\net45\SoundFingerprinting.Infrastructure.dll</HintPath>
+      <HintPath>..\packages\SoundFingerprinting.3.0.0-beta\lib\net45\SoundFingerprinting.Infrastructure.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

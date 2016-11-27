@@ -43,11 +43,10 @@
                     Id = id.ToString(),
                     Album = track.Album,
                     Artist = track.Artist,
-                    GroupId = track.GroupId,
                     ISRC = track.ISRC,
                     ReleaseYear = track.ReleaseYear,
                     Title = track.Title,
-                    TrackLengthSec = track.TrackLengthSec
+                    TrackLengthSec = track.Length
                 };
 
             this.solrForTracksCore.Add(dto);
@@ -113,7 +112,7 @@
                 dto.Album,
                 dto.ReleaseYear,
                 dto.TrackLengthSec,
-                new SolrModelReference(dto.Id)) { GroupId = dto.GroupId };
+                new SolrModelReference(dto.Id));
             return track;
         }
 

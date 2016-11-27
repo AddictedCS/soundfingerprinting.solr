@@ -26,9 +26,15 @@
 
         public string BuildReadQueryForTitleAndArtist(string title, string artist)
         {
-            string query = string.Format(
-                "title:\"{0}\" AND artist:\"{1}\"", EscapeSolrQueryInput(title), EscapeSolrQueryInput(artist));
+            string query = string.Format("title:\"{0}\" AND artist:\"{1}\"", EscapeSolrQueryInput(title), EscapeSolrQueryInput(artist));
             return query;
+        }
+
+        public string BuildQueryForClusters(IEnumerable<string> clusters)
+        {
+            return string.Format(
+                "clusters:({0})",
+                string.Join(",", clusters.Select(cluster => string.Format("\"{0}\"", EscapeSolrQueryInput(cluster)))));
         }
 
         private static string EscapeSolrQueryInput(string title)

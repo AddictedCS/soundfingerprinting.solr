@@ -66,7 +66,7 @@
             {
                 var modelReference =
                     trackDao.InsertTrack(
-                        new TrackData("isrc", "artist", "title", "album", 2012, 200) { GroupId = "group-id" });
+                        new TrackData("isrc", "artist", "title", "album", 2012, 200));
 
                 Assert.IsFalse(modelReferences.Contains(modelReference));
                 modelReferences.Add(modelReference);
@@ -173,9 +173,8 @@
             Assert.AreEqual(expectedTrack.Album, actualTrack.Album);
             Assert.AreEqual(expectedTrack.Artist, actualTrack.Artist);
             Assert.AreEqual(expectedTrack.Title, actualTrack.Title);
-            Assert.AreEqual(expectedTrack.TrackLengthSec, actualTrack.TrackLengthSec);
+            Assert.AreEqual(expectedTrack.Length, actualTrack.Length);
             Assert.AreEqual(expectedTrack.ISRC, actualTrack.ISRC);
-            Assert.AreEqual(expectedTrack.GroupId, actualTrack.GroupId);
         }
 
         private List<TrackData> InsertRandomTracks(int trackCount)
@@ -194,10 +193,7 @@
 
         private TrackData GetRandomTrack()
         {
-            return new TrackData(Guid.NewGuid().ToString(), "artist", "title", "album", 1986, 360)
-            {
-                GroupId = Guid.NewGuid().ToString().Substring(0, 20)
-            };
+            return new TrackData(Guid.NewGuid().ToString(), "artist", "title", "album", 1986, 360);
         }
 
         private void TearDownTracks(IEnumerable<IModelReference> modelReferences)

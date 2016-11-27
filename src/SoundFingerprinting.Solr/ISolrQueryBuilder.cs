@@ -9,5 +9,7 @@ namespace SoundFingerprinting.Solr
         string BuildReadQueryForHashesAndThreshold(IEnumerable<long[]> allHashes, int thresholdVotes);
 
         string BuildReadQueryForTitleAndArtist(string title, string artist);
+
+        string BuildQueryForClusters(IEnumerable<string> clusters);
     }
 }
