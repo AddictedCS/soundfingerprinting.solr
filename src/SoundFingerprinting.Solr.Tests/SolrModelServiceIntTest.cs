@@ -79,7 +79,6 @@
             var firstTrackReference = modelService.InsertTrack(firstTrack);
             var secondTrack = new TrackData("isrc2", "artist", "title", "album", 1986, 200);
             var secondTrackReference = modelService.InsertTrack(secondTrack);
-            Assert.IsFalse(firstTrackReference.Equals(secondTrackReference));
             var firstHashData = new HashedFingerprint(GenericSignature(), firstTrackBuckets, 1, 0.928, new[] { "first-group-id" });
             var secondHashData = new HashedFingerprint(GenericSignature(), secondTrackBuckets, 1, 0.928, new[] { "second-group-id" });
 
@@ -104,7 +103,7 @@
                    .From(PathToMp3, SecondsToProcess, StartAtSecond)
                    .WithFingerprintConfig(config =>
                        {
-                           config.SpectrogramConfig.Stride = new StaticStride(0);
+                           config.Stride = new StaticStride(0);
                        })
                    .UsingServices(this.audioService)
                    .Hash()

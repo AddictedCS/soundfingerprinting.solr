@@ -1,5 +1,7 @@
 ﻿namespace SoundFingerprinting.Solr.Tests
 {
+    using System.Collections.Generic;
+
     using NUnit.Framework;
 
     [TestFixture]
@@ -31,6 +33,21 @@
             string query = queryBuilder.BuildQueryForClusters(new string[3] { "CA", "LA", "WA" });
 
             Assert.AreEqual("clusters:(\"CA\",\"LA\",\"WA\")", query);
+        }
+
+        [Test]
+        public void ShouldBuildNestedQueryForMultipleFingerprints()
+        {
+            var fingerprints = new List<long[]> 
+                {
+                    new long[] { 10, 11, 12, 21, 22 }, new long[] { 12, 13, 14, 15, 16 } 
+                };
+
+            string query = queryBuilder.BuildReadQueryForHashesAndThreshold(fingerprints, 3);
+
+            Assert.AreEqual(
+                "_query_:\"{!edismax mm=3}hashTable_0:10 hashTable_1:11 hashTable_2:12 hashTable_3:21 hashTable_4:22\" _query_:\"{!edismax mm=3}hashTable_0:12 hashTable_1:13 hashTable_2:14 hashTable_3:15 hashTable_4:16\"",
+                query);
         }
     }
 }

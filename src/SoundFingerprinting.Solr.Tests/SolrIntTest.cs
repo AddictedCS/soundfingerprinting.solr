@@ -51,14 +51,14 @@
                 {
                     SubFingerprintId = "1",
                     TrackId = "1",
-                    Hashes = new Dictionary<int, long> { { 1, 10 }, { 2, 11 }, { 3, 12 }, { 4, 13 }, { 5, 14 } }
+                    Hashes = new Dictionary<int, long> { { 0, 10 }, { 1, 11 }, { 2, 12 }, { 3, 13 }, { 4, 14 } }
                 };
 
             var doc2 = new SubFingerprintDTO
                 {
                     SubFingerprintId = "2",
                     TrackId = "2",
-                    Hashes = new Dictionary<int, long> { { 1, 10 }, { 2, 11 }, { 3, 20 }, { 4, 21 }, { 5, 22 } }
+                    Hashes = new Dictionary<int, long> { { 0, 10 }, { 1, 11 }, { 2, 20 }, { 3, 21 }, { 4, 22 } }
                 };
 
             var solr = DependencyResolver.Current.Get<ISolrOperations<SubFingerprintDTO>>();
@@ -67,7 +67,7 @@
             solr.Add(doc2);
             solr.Commit();
 
-            var query = new SolrQuery("{!frange l=4 u=5}sum(termfreq(hashTable_1,'10'),termfreq(hashTable_2,'11'),termfreq(hashTable_3,'12'),termfreq(hashTable_4,'21'), termfreq(hashTable_5,'22'))");
+            var query = new SolrQuery("_query_:\"{!edismax mm=4}hashTable_0:10 hashTable_1:11 hashTable_2:12 hashTable_3:21 hashTable_4:22\" _query_:\"{!edismax mm=4}hashTable_0:10 hashTable_1:11 hashTable_2:20 hashTable_3:21 hashTable_4:22\"");
             var docs = solr.Query(query);
            
             Assert.AreEqual(1, docs.Count);
