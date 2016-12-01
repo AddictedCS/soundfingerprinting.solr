@@ -67,3 +67,9 @@ In order to build latest version of the <code>SoundFingerprinting.Solr</code> as
 ### Get it on NuGet
 
     Install-Package SoundFingerprinting.Solr -Pre
+    
+### Contribute
+If you want to contribute you are welcome to open issues or discuss on [issues](https://github.com/AddictedCS/soundfingerprinting/issues) page. Feel free to contact me for any remarks, ideas, bug reports etc. 
+
+### Licence
+The framework is provided under [MIT](https://opensource.org/licenses/MIT) licence agreement.
