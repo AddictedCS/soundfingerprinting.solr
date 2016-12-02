@@ -58,8 +58,7 @@
 
         public IList<HashedFingerprint> ReadHashedFingerprintsByTrackReference(IModelReference trackReference)
         {
-            var query = new SolrQuery(string.Format("trackId:{0}", SolrModelReference.GetId(trackReference)));
-            var results = solr.Query(query);
+            var results = solr.Query(string.Format("trackId:{0}", SolrModelReference.GetId(trackReference)));
             return results.Select(GetHashedFingerprint).ToList();
         }
 

@@ -44,6 +44,14 @@
         }
 
         [Test]
+        public void ShouldReadNonExistingTrack()
+        {
+            var actual = trackDao.ReadTrack(new SolrModelReference("256-256"));
+
+            Assert.IsNull(actual);
+        }
+
+        [Test]
         public void ShouldDeleteTrack()
         {
             var expected = new TrackData("isrc", "artist", "title", "album", 1994, 4.0);
@@ -60,7 +68,7 @@
         [Test]
         public void ShouldInsertMultipleTracksConcurrently()
         {
-            const int NumberOfTracks = 1000;
+            const int NumberOfTracks = 100;
             var modelReferences = new ConcurrentBag<IModelReference>();
             for (int i = 0; i < NumberOfTracks; i++)
             {

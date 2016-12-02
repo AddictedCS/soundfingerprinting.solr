@@ -1,19 +1,16 @@
 ﻿namespace SoundFingerprinting.Solr.Tests
 {
     using System.Collections.Generic;
-    using System.Collections.Specialized;
     using System.Linq;
 
+    using Converters;
+    using DAO;
+    using Math;
     using Moq;
-
     using NUnit.Framework;
 
     using SolrNet;
     using SolrNet.Commands.Parameters;
-
-    using SoundFingerprinting.Math;
-    using SoundFingerprinting.Solr.Converters;
-    using SoundFingerprinting.Solr.DAO;
 
     [TestFixture]
     public class SubFingerprintDaoTest
@@ -97,6 +94,32 @@
                 });
 
             subFingerprintDao.ReadSubFingerprints(new long[25], 5, new[] { "CA", "LA" });
+        }
+
+        [Test]
+        public void ShouldReadSubFingerprintsByReference()
+        {
+            var trackReference = new SolrModelReference("track-id");
+            var results = new SolrQueryResults<SubFingerprintDTO>();
+            var dto = new SubFingerprintDTO
+                          {
+                              Clusters = new[] { "CA" },
+                              SubFingerprintId = "123-123",
+                              Hashes = new Dictionary<int, long>(),
+                              SequenceAt = 10d,
+                              SequenceNumber = 10,
+                              TrackId = "track-id"
+                          };
+            results.AddRange(new List<SubFingerprintDTO> { dto });
+            solr.Setup(s => s.Query("trackId:track-id")).Returns(results);
+            dictionaryToHashConverter.Setup(dhc => dhc.FromSolrDictionaryToHashes(It.IsAny<IDictionary<int, long>>()))
+                .Returns(new long[0]);
+            hashConverter.Setup(hc => hc.ToBytes(It.IsAny<long[]>(), It.IsAny<int>())).Returns(new byte[0]);
+
+            var subs = subFingerprintDao.ReadHashedFingerprintsByTrackReference(trackReference);
+
+            Assert.AreEqual(1, subs.Count);
+            CollectionAssert.AreEqual(new[] { "CA" }, subs.First().Clusters);
         }
     }
 }
