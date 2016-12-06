@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundFingerprinting.Solr", "SoundFingerprinting.Solr\SoundFingerprinting.Solr.csproj", "{D17D8F7C-44E3-400C-94FF-20E2F3C2EB9E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundFingerprinting.Solr.Tests", "SoundFingerprinting.Solr.Test\SoundFingerprinting.Solr.Tests.csproj", "{6B8D3138-503D-4DD3-8A1F-1A12186DFC3A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundFingerprinting.Solr.Tests", "SoundFingerprinting.Solr.Tests\SoundFingerprinting.Solr.Tests.csproj", "{6B8D3138-503D-4DD3-8A1F-1A12186DFC3A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{7E7ADDA6-AE64-49FB-B377-83A5798DF1E2}"
 	ProjectSection(SolutionItems) = preProject

@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6B8D3138-503D-4DD3-8A1F-1A12186DFC3A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SoundFingerprinting.Solr.Tests</RootNamespace>
+    <AssemblyName>SoundFingerprinting.Solr.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
+    <IsCodedUITest>False</IsCodedUITest>
+    <TestProjectType>UnitTest</TestProjectType>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <Choose>
+    <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
+      <ItemGroup>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+      </ItemGroup>
+    </When>
+    <Otherwise />
+  </Choose>
+  <ItemGroup>
+    <Compile Include="Integration\IntegrationTestWithSampleFiles.cs" />
+    <Compile Include="DictionaryToHashConverterTest.cs" />
+    <Compile Include="Integration\FingerprintCommandBuilderTest.cs" />
+    <Compile Include="Integration\SubFingerprintDaoTest.cs" />
+    <Compile Include="Integration\SolrTest.cs" />
+    <Compile Include="Integration\SolrModelServiceTest.cs" />
+    <Compile Include="SolrQueryBuilderTest.cs" />
+    <Compile Include="SubFingerprintDaoTest.cs" />
+    <Compile Include="Integration\TrackDaoTest.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+    <None Include="SolrNet.chm" />
+    <Content Include="TestEnvironment\chopinsamples.bin" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Castle.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Moq, Version=4.5.28.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>..\packages\Moq.4.5.28\lib\net45\Moq.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NAudio, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Ninject.Integration.SolrNet, Version=0.5.0.1002, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SolrNet.Ninject.0.5.0-alpha2\lib\Ninject.Integration.SolrNet.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="nunit.framework, Version=3.5.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.3.5.0\lib\net45\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SolrNet, Version=0.5.0.1002, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SolrNet.0.5.0-alpha2\lib\SolrNet.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SoundFingerprinting, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SoundFingerprinting.3.0.0\lib\net45\SoundFingerprinting.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SoundFingerprinting.Audio, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SoundFingerprinting.3.0.0\lib\net45\SoundFingerprinting.Audio.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SoundFingerprinting.Audio.NAudio, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SoundFingerprinting.3.0.0\lib\net45\SoundFingerprinting.Audio.NAudio.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SoundFingerprinting.Infrastructure, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SoundFingerprinting.3.0.0\lib\net45\SoundFingerprinting.Infrastructure.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SoundFingerprinting.Solr\SoundFingerprinting.Solr.csproj">
+      <Project>{d17d8f7c-44e3-400c-94ff-20e2f3c2eb9e}</Project>
+      <Name>SoundFingerprinting.Solr</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Choose>
+    <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
+      <ItemGroup>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.CodedUITestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITest.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITest.Extension, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITesting, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <PropertyGroup>
+    <PreBuildEvent Condition=" '$(OS)' != 'Unix' ">copy "$(ProjectDir)\TestEnvironment\*.*" "$(TargetDir)"</PreBuildEvent>
+    <PreBuildEvent Condition=" '$(OS)' == 'Unix' ">cp $(ProjectDir)\TestEnvironment/*.* $(TargetDir)</PreBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

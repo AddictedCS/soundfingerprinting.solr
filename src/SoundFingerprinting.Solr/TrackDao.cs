@@ -15,18 +15,24 @@
     {
         private readonly ISolrOperations<TrackDTO> solrForTracksCore;
         private readonly ISolrOperations<SubFingerprintDTO> solrForSubfingerprintsCore;
+        private readonly ISolrQueryBuilder solrQueryBuilder;
 
         public TrackDao()
             : this(
                 DependencyResolver.Current.Get<ISolrOperations<TrackDTO>>(),
-                DependencyResolver.Current.Get<ISolrOperations<SubFingerprintDTO>>())
+                DependencyResolver.Current.Get<ISolrOperations<SubFingerprintDTO>>(),
+                DependencyResolver.Current.Get<ISolrQueryBuilder>())
         {
         }
 
-        protected TrackDao(ISolrOperations<TrackDTO> solrForTracksCore, ISolrOperations<SubFingerprintDTO> solrForSubfingerprintsCore)
+        protected TrackDao(
+            ISolrOperations<TrackDTO> solrForTracksCore,
+            ISolrOperations<SubFingerprintDTO> solrForSubfingerprintsCore,
+            ISolrQueryBuilder solrQueryBuilder)
         {
             this.solrForTracksCore = solrForTracksCore;
             this.solrForSubfingerprintsCore = solrForSubfingerprintsCore;
+            this.solrQueryBuilder = solrQueryBuilder;
         }
 
         public IModelReference InsertTrack(TrackData track)
@@ -37,16 +43,17 @@
                     Id = id.ToString(),
                     Album = track.Album,
                     Artist = track.Artist,
-                    GroupId = track.GroupId,
                     ISRC = track.ISRC,
                     ReleaseYear = track.ReleaseYear,
                     Title = track.Title,
-                    TrackLengthSec = track.TrackLengthSec
+                    TrackLengthSec = track.Length
                 };
 
             this.solrForTracksCore.Add(dto);
             this.solrForTracksCore.Commit();
-            return new SolrModelReference(id.ToString());
+            var trackReference = new SolrModelReference(id.ToString());
+            track.TrackReference = trackReference;
+            return trackReference;
         }
 
         public TrackData ReadTrack(IModelReference trackReference)
@@ -68,7 +75,7 @@
 
         public IList<TrackData> ReadTrackByArtistAndTitleName(string artist, string title)
         {
-            var query = new SolrQuery(string.Format("title:{0} AND artist:{1}", title, artist));
+            var query = solrQueryBuilder.BuildReadQueryForTitleAndArtist(title, artist);
             var results = this.solrForTracksCore.Query(query);
             return AllFromResultSet(results);
         }
@@ -77,7 +84,6 @@
         {
             var query = new SolrQuery(string.Format("isrc:{0}", isrc));
             var results = this.solrForTracksCore.Query(query);
-
             return FirstFromResultSet(results);
         }
 
@@ -108,7 +114,7 @@
                 dto.Album,
                 dto.ReleaseYear,
                 dto.TrackLengthSec,
-                new SolrModelReference(dto.Id)) { GroupId = dto.GroupId };
+                new SolrModelReference(dto.Id));
             return track;
         }
 

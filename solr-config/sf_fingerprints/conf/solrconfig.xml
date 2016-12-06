@@ -262,10 +262,10 @@
            maxRamMB - the maximum amount of RAM (in MB) that this cache is allowed
                       to occupy
      -->
-    <queryResultCache class="solr.LRUCache"
+    <!-- <queryResultCache class="solr.LRUCache"
                      size="512"
                      initialSize="512"
-                     autowarmCount="0"/>
+                     autowarmCount="0"/> -->
    
     <!-- Document Cache
 

@@ -1,10 +1,23 @@
 ﻿namespace SoundFingerprinting.Solr
 {
+    using SoundFingerprinting.DAO;
+
     public class SolrModelService : ModelService
     {
-        public SolrModelService()
-            : base(new TrackDao(), new HashBinDao(), new SubFingerprintDao(), new FingerprintDao(), new SpectralImageDao())
+        public SolrModelService() : this(new TrackDao(), new SubFingerprintDao())
         {
+        }
+
+        protected SolrModelService(ITrackDao trackDao, ISubFingerprintDao subFingerprintDao) : base(trackDao, subFingerprintDao)
+        {
+        }
+
+        public override bool SupportsBatchedSubFingerprintQuery
+        {
+            get
+            {
+                return true;
+            }
         }
     }
 }
