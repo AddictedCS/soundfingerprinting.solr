@@ -51,7 +51,9 @@
 
             this.solrForTracksCore.Add(dto);
             this.solrForTracksCore.Commit();
-            return new SolrModelReference(id.ToString());
+            var trackReference = new SolrModelReference(id.ToString());
+            track.TrackReference = trackReference;
+            return trackReference;
         }
 
         public TrackData ReadTrack(IModelReference trackReference)

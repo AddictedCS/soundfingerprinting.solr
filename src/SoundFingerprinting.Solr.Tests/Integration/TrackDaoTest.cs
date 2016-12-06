@@ -1,4 +1,4 @@
-﻿namespace SoundFingerprinting.Solr.Tests
+﻿namespace SoundFingerprinting.Solr.Tests.Integration
 {
     using System;
     using System.Collections.Concurrent;
@@ -11,7 +11,8 @@
     using SoundFingerprinting.DAO.Data;
 
     [TestFixture]
-    public class TrackDaoIntTest
+    [Category("IntegrationTest")]
+    public class TrackDaoTest
     {
         private readonly TrackDao trackDao = new TrackDao();
 

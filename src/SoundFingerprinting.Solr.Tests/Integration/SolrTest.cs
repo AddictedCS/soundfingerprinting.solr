@@ -1,4 +1,4 @@
-﻿namespace SoundFingerprinting.Solr.Tests
+﻿namespace SoundFingerprinting.Solr.Tests.Integration
 {
     using System.Collections.Generic;
     using System.Configuration;
@@ -15,7 +15,7 @@
 
     [TestFixture]
     [Category("IntegrationTest")]
-    public class SolrIntTest
+    public class SolrTest
     {
         [Test]
         public void SolrServerIsAccessible()

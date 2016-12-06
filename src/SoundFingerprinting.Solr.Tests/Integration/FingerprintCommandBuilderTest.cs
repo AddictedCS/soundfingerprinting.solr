@@ -1,4 +1,4 @@
-﻿namespace SoundFingerprinting.Solr.Tests
+﻿namespace SoundFingerprinting.Solr.Tests.Integration
 {
     using System.Linq;
 
@@ -11,7 +11,7 @@
 
     [TestFixture]
     [Category("IntegrationTest")]
-    public class FingerprintCommandBuilderIntTest : IntegrationTestWithSampleFiles
+    public class FingerprintCommandBuilderTest : IntegrationTestWithSampleFiles
     {
         private readonly IFingerprintCommandBuilder fingerprintCommandBuilder = new FingerprintCommandBuilder();
         private readonly IQueryCommandBuilder queryCommandBuilder = new QueryCommandBuilder();

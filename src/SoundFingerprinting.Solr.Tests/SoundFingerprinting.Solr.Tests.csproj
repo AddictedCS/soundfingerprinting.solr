@@ -45,14 +45,15 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="IntegrationTestWithSampleFiles.cs" />
+    <Compile Include="Integration\IntegrationTestWithSampleFiles.cs" />
     <Compile Include="DictionaryToHashConverterTest.cs" />
-    <Compile Include="FingerprintCommandBuilderIntTest.cs" />
-    <Compile Include="SolrIntTest.cs" />
-    <Compile Include="SolrModelServiceIntTest.cs" />
+    <Compile Include="Integration\FingerprintCommandBuilderTest.cs" />
+    <Compile Include="Integration\SubFingerprintDaoTest.cs" />
+    <Compile Include="Integration\SolrTest.cs" />
+    <Compile Include="Integration\SolrModelServiceTest.cs" />
     <Compile Include="SolrQueryBuilderTest.cs" />
     <Compile Include="SubFingerprintDaoTest.cs" />
-    <Compile Include="TrackDaoIntTest.cs" />
+    <Compile Include="Integration\TrackDaoTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
