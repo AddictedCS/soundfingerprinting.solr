@@ -12,7 +12,6 @@
     using SoundFingerprinting.Strides;
 
     [TestFixture]
-    [Category("RequiresWindowsDLL")]
     public class SolrModelServiceIntTest : IntegrationTestWithSampleFiles
     {
         private readonly long[] firstTrackBuckets = new long[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25 };
@@ -42,7 +41,7 @@
         public void ShouldInsertAllSubfingerprintsForTrack()
         {
             var hashedFingerprints = fcb.BuildFingerprintCommand()
-                                         .From(PathToMp3)
+                                         .From(GetAudioSamples())
                                          .UsingServices(audioService)
                                          .Hash()
                                          .Result;
@@ -94,13 +93,11 @@
         [Test]
         public void ShouldDeleteSubfingerprintsOnTrackDelete()
         {
-            const int SecondsToProcess = 20;
-            const int StartAtSecond = 30;
-
             var track = new TrackData("isrc", "artist", "title", "album", 1986, 3.3d);
             var trackReference = trackDao.InsertTrack(track);
+            var audioSamples = GetAudioSamples();
             var hashData = fcb.BuildFingerprintCommand()
-                   .From(PathToMp3, SecondsToProcess, StartAtSecond)
+                   .From(audioSamples)
                    .WithFingerprintConfig(config =>
                        {
                            config.Stride = new StaticStride(0);
@@ -113,7 +110,7 @@
 
             int modifiedRows = trackDao.DeleteTrack(trackReference);
 
-            Assert.AreEqual(1 + (int)(20 / 1.48), modifiedRows);
+            Assert.AreEqual((int)(audioSamples.Duration / 1.48), modifiedRows);
         }
     }
 }

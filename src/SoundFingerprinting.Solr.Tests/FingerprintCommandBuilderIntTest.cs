@@ -10,7 +10,6 @@
     using SoundFingerprinting.DAO.Data;
 
     [TestFixture]
-    [Category("RequiresWindowsDLL")]
     [Category("IntegrationTest")]
     public class FingerprintCommandBuilderIntTest : IntegrationTestWithSampleFiles
     {
@@ -18,7 +17,6 @@
         private readonly IQueryCommandBuilder queryCommandBuilder = new QueryCommandBuilder();
         private readonly IModelService modelService = new SolrModelService();
         private readonly IAudioService audioService = new NAudioService();
-        private readonly ITagService tagService = new NAudioTagService();
 
         [TearDown]
         public void TearDown()
@@ -35,31 +33,32 @@
         {
             const int SecondsToProcess = 10;
             const int StartAtSecond = 30;
-            var tags = tagService.GetTagInfo(PathToMp3);
-            var track = new TrackData(tags);
+            var audioSamples = GetAudioSamples();
+            var track = new TrackData(string.Empty, audioSamples.Origin, audioSamples.Origin, string.Empty, 1986, audioSamples.Duration);
             var trackReference = modelService.InsertTrack(track);
-
-            var hashDatas = fingerprintCommandBuilder
-                                            .BuildFingerprintCommand()
-                                            .From(PathToMp3)
-                                            .UsingServices(audioService)
-                                            .Hash()
-                                            .Result;
+            var hashDatas = fingerprintCommandBuilder.BuildFingerprintCommand()
+                    .From(audioSamples)
+                    .UsingServices(audioService)
+                    .Hash()
+                    .Result;
 
             modelService.InsertHashDataForTrack(hashDatas, trackReference);
 
+            var querySamples = GetQuerySamples(audioSamples, StartAtSecond, SecondsToProcess);
+
             var queryResult = queryCommandBuilder.BuildQueryCommand()
-                               .From(PathToMp3, SecondsToProcess, StartAtSecond)
-                               .UsingServices(modelService, audioService)
-                               .Query()
-                               .Result;
+                    .From(new AudioSamples(querySamples, string.Empty, audioSamples.SampleRate))
+                    .UsingServices(modelService, audioService)
+                    .Query()
+                    .Result;
 
             Assert.IsTrue(queryResult.ContainsMatches);
             Assert.AreEqual(1, queryResult.ResultEntries.Count());
-            Assert.AreEqual(trackReference, queryResult.BestMatch.Track.TrackReference);
-            Assert.IsTrue(queryResult.BestMatch.QueryMatchLength > SecondsToProcess - 2);
-            Assert.AreEqual(StartAtSecond, System.Math.Abs(queryResult.BestMatch.TrackStartsAt), 0.1d);
-            Assert.IsTrue(queryResult.BestMatch.Confidence > 0.8);
+            var bestMatch = queryResult.BestMatch;
+            Assert.AreEqual(trackReference, bestMatch.Track.TrackReference);
+            Assert.IsTrue(bestMatch.QueryMatchLength > SecondsToProcess - 3, string.Format("QueryMatchLength:{0}", bestMatch.QueryLength));
+            Assert.AreEqual(StartAtSecond, System.Math.Abs(bestMatch.TrackStartsAt), 0.1d);
+            Assert.IsTrue(bestMatch.Confidence > 0.7, string.Format("Confidence:{0}", bestMatch.Confidence));
         }
     }
 }

@@ -11,7 +11,6 @@
     using SoundFingerprinting.DAO.Data;
 
     [TestFixture]
-    [Category("RequiresWindowsDLL")]
     public class TrackDaoIntTest
     {
         private readonly TrackDao trackDao = new TrackDao();

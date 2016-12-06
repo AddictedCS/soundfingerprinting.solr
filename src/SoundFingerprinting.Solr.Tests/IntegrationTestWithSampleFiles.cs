@@ -2,8 +2,11 @@
 {
     using System;
     using System.IO;
+    using System.Runtime.Serialization.Formatters.Binary;
 
     using NUnit.Framework;
+
+    using SoundFingerprinting.Audio;
 
     public abstract class IntegrationTestWithSampleFiles
     {
@@ -14,13 +17,32 @@
                 (byte)22, (byte)23, (byte)24, (byte)25
             };
 
-        protected string PathToMp3 = Path.Combine(TestContext.CurrentContext.TestDirectory, "Chopin.mp3");
+        protected string PathToSamples= Path.Combine(TestContext.CurrentContext.TestDirectory, "chopinsamples.bin");
 
         protected byte[] GenericSignature()
         {
-            byte[] copy = new byte[this.genericSignatureArray.Length];
-            Array.Copy(this.genericSignatureArray, copy, copy.Length);
+            byte[] copy = new byte[genericSignatureArray.Length];
+            Array.Copy(genericSignatureArray, copy, copy.Length);
             return copy;
+        }
+
+        protected AudioSamples GetAudioSamples()
+        {
+            var serializer = new BinaryFormatter();
+
+            using (Stream stream = new FileStream(PathToSamples, FileMode.Open, FileAccess.Read))
+            {
+                return (AudioSamples)serializer.Deserialize(stream);
+            }
+        }
+
+        protected float[] GetQuerySamples(AudioSamples audioSamples, int startAtSecond, int secondsToProcess)
+        {
+            int sampleRate = audioSamples.SampleRate;
+            float[] querySamples = new float[sampleRate * secondsToProcess];
+            int startAt = startAtSecond * sampleRate;
+            Array.Copy(audioSamples.Samples, startAt, querySamples, 0, querySamples.Length);
+            return querySamples;
         }
     }
 }

@@ -2,12 +2,12 @@
 
 [![Join the chat at https://gitter.im/soundfingerprinting/Lobby](https://badges.gitter.im/soundfingerprinting/Lobby.svg)](https://gitter.im/soundfingerprinting/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-_soundfingerprinting.solr_ is Solr backend implementation for [soundfingerprinting](https://github.com/AddictedCS/soundfingerprinting) framework. It is very resilient, fast, non-relational database, which allows you to scale audio fingerprint storage according to you business needs.
+_soundfingerprinting.solr_ is [Solr](http://lucene.apache.org/solr) backend for [soundfingerprinting](https://github.com/AddictedCS/soundfingerprinting) framework. It is a very resilient, fast, non-relational storage, which allows you to scale your backend very effectively.
 
 [![Build Status](https://travis-ci.org/AddictedCS/soundfingerprinting.solr.png)](https://travis-ci.org/AddictedCS/soundfingerprinting.solr)
 
 ### How to use
-`SoundFingerprinting.Solr` uses `SorlNet` in order to connect to actual solr instances. Please provide connection string for both cores (_sf_tracks_ and _sf_fingerprints_) in your `app.config` as outlined:
+**SoundFingerprinting.Solr** uses [SorlNet](https://github.com/mausch/SolrNet) in order to connect to actual solr instances. Please provide connection string for both cores (_sf_tracks_ and _sf_fingerprints_) in your `app.config` as outlined:
 ```xml
 <configuration>
   <configSections>
@@ -20,35 +20,15 @@ _soundfingerprinting.solr_ is Solr backend implementation for [soundfingerprinti
 </configuration>
 
 ```
+### Try it with Docker
+
+    docker pull addictedcs/soundfingerprinting.solr
+	docker run -p 8983:8983 addictedcs/soundfingerprinting.solr
+	
+Docker image contains initialized cores and configs required for **SoundFingerprinting** framework to properly function.
 
 ### Solr schema for fingerprints and tracks
-_soundfingerprinting_ audio fingerprints are stored in _sf_fingerprints_ core. It's schema is outlined below (you can find it in `solr-config` folder:
-
-```xml
-<schema name="sf_fingerprints" version="1.5">
-   
-	<field name="subFingerprintId" type="string" indexed="true" stored="true" required="true" multiValued="false" omitTermFreqAndPositions="true" omitNorms="true" />
-	<field name="trackId" type="string" indexed="true" stored="true" required="true" multiValued="false" omitTermFreqAndPositions="true" omitNorms="true" />
-	<dynamicField name="hashTable_*" type="long" indexed="true" stored="true" omitTermFreqAndPositions="true" omitNorms="true" />
-	<field name="sequenceAt" type="double" indexed="false" stored="true" required="false" multiValued="false" omitTermFreqAndPositions="true" omitNorms="true" />
-	<field name="sequenceNumber" type="int" indexed="false" stored="true" required="false" multiValued="false" omitTermFreqAndPositions="true" omitNorms="true" />
-	<field name="clusters" type="string" indexed="true" stored="true" required="false" multiValued="true" omitTermFreqAndPositions="true" omitNorms="true" />
-
-</schema>
-```
-
-Track metadata is stored in _sf_tracks_ core.
-```xml
-<schema name="sf_fingerprints" version="1.5">
-    <field name="trackId" type="string" indexed="true" stored="true" required="true" multiValued="false" omitTermFreqAndPositions="true" omitNorms="true" />
-    <field name="artist" type="string" indexed="true" stored="true" required="true" multiValued="false" omitTermFreqAndPositions="true" omitNorms="true" />
-    <field name="title" type="string" indexed="true" stored="true" required="true" multiValued="false" omitTermFreqAndPositions="true" omitNorms="true" />
-    <field name="isrc" type="string" indexed="true" stored="true" required="true" multiValued="false" omitTermFreqAndPositions="true" omitNorms="true" />
-    <field name="album" type="string" indexed="true" stored="true" required="true" multiValued="false" omitTermFreqAndPositions="true" omitNorms="true" />
-    <field name="trackLengthSec" type="double" indexed="false" stored="true" required="false" multiValued="false" omitTermFreqAndPositions="true" omitNorms="true" />
-    <field name="releaseYear" type="int" indexed="false" stored="true" required="false" multiValued="false" omitTermFreqAndPositions="true" omitNorms="true" />
-</schema>
-```
+_soundfingerprinting_ audio fingerprints are stored in _sf_fingerprints_ core. It's schema can be found in `solr-config` folder. Track metadata is stored in _sf_tracks_ core.
 
 ### Disabling query result cache
 It is important to disable query result cache for _sf_fingerprints_ core. You may end up with Solr memory issues otherwise.
