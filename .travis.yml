@@ -1,11 +1,16 @@
 language: csharp
 solution: src/SoundFingerprinting.Solr.sln
+services:
+  - docker
+before_install:
+  - docker pull addictedcs/soundfingerprinting.solr
+  - docker run -d -p 8983:8983 addictedcs/soundfingerprinting.solr
 install:
   - nuget restore src/SoundFingerprinting.Solr.sln
   - nuget install NUnit.Runners -Version 3.5.0 -OutputDirectory build/testrunner
 script:
   - xbuild /p:Configuration=Release src/SoundFingerprinting.Solr.sln
-  - mono build/testrunner/NUnit.ConsoleRunner.3.5.0/tools/nunit3-console.exe src/SoundFingerprinting.Solr.Tests/bin/Release/SoundFingerprinting.Solr.Tests.dll --where="cat != RequiresWindowsDLL && cat != IntegrationTest"
+  - mono build/testrunner/NUnit.ConsoleRunner.3.5.0/tools/nunit3-console.exe src/SoundFingerprinting.Solr.Tests/bin/Release/SoundFingerprinting.Solr.Tests.dll
 notifications:
   webhooks:
     urls:

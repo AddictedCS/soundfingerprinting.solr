@@ -41,7 +41,7 @@ Links to the third party libraries used by _soundfingerprinting_ project.
 ### Binaries
     git clone git@github.com:AddictedCS/soundfingerprinting.solr.git
     
-In order to build latest version of the <code>SoundFingerprinting.Solr</code> assembly run the following command from repository root
+In order to build latest version of the **SoundFingerprinting.Solr** assembly run the following command from repository root
 
     .\build.cmd
 ### Get it on NuGet
