@@ -1,19 +1,15 @@
 ﻿namespace SoundFingerprinting.Solr.Infrastructure
 {
-    using System;
     using System.Configuration;
-    using System.Linq;
 
     using Ninject;
     using Ninject.Integration.SolrNet;
     using Ninject.Integration.SolrNet.Config;
-    using Ninject.Parameters;
 
     using SolrNet;
     using SolrNet.Impl;
 
     using SoundFingerprinting.Infrastructure;
-    using SoundFingerprinting.Math;
     using SoundFingerprinting.Solr.Converters;
 
     public class SolrModuleLoader : IModuleLoader
@@ -23,8 +19,8 @@
             var solrConfig = (SolrConfigurationSection)ConfigurationManager.GetSection("solr");
             kernel.Load(new SolrNetModule(solrConfig.SolrServers));
 
-            kernel.Bind<IDictionaryToHashConverter>().To<DictionaryToHashConverter>();
-            kernel.Bind<ISolrQueryBuilder>().To<SolrQueryBuilder>();
+            kernel.Bind<IDictionaryToHashConverter>().To<DictionaryToHashConverter>().InSingletonScope();
+            kernel.Bind<ISolrQueryBuilder>().To<SolrQueryBuilder>().InSingletonScope();
 
 
             var tracksConnection = (SolrConnection)kernel.Get<ISolrConnection>(metadata =>
@@ -43,13 +39,13 @@
 
             kernel.Unbind<ISolrConnection>();
 
-            kernel.Bind<ISolrConnection>().ToConstant<PostSolrConnection>(new PostSolrConnection(tracksConnection, tracksConnection.ServerURL))
-                .WithMetadata("CoreId", (object)"tracks");
+            kernel.Bind<ISolrConnection>()
+                  .ToConstant<PostSolrConnection>(new PostSolrConnection(tracksConnection, tracksConnection.ServerURL))
+                  .WithMetadata("CoreId", (object)"tracks");
 
-            kernel.Bind<ISolrConnection>().ToConstant<PostSolrConnection>(new PostSolrConnection(fingerprintsConnection, fingerprintsConnection.ServerURL))
-                .WithMetadata("CoreId", (object)"fingerprints");
-
-
+            kernel.Bind<ISolrConnection>()
+                  .ToConstant<PostSolrConnection>(new PostSolrConnection(fingerprintsConnection, fingerprintsConnection.ServerURL))
+                  .WithMetadata("CoreId", (object)"fingerprints");
         }
     }
 }

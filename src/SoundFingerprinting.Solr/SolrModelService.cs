@@ -1,32 +1,23 @@
 ﻿namespace SoundFingerprinting.Solr
 {
-    using System.Collections.Generic;
-
     using SoundFingerprinting.DAO;
-    using SoundFingerprinting.Data;
 
     public class SolrModelService : ModelService
     {
-        private readonly HashBinDao hashBinDao;
-
-        public SolrModelService() : this(new TrackDao(), new HashBinDao(), new SubFingerprintDao(), new FingerprintDao(), new SpectralImageDao())
+        public SolrModelService() : this(new TrackDao(), new SubFingerprintDao())
         {
         }
 
-        protected SolrModelService(
-            ITrackDao trackDao,
-            IHashBinDao hashBinDao,
-            ISubFingerprintDao subFingerprintDao,
-            IFingerprintDao fingerprintDao,
-            ISpectralImageDao spectralImageDao)
-            : base(trackDao, hashBinDao, subFingerprintDao, fingerprintDao, spectralImageDao)
+        protected SolrModelService(ITrackDao trackDao, ISubFingerprintDao subFingerprintDao) : base(trackDao, subFingerprintDao)
         {
-            this.hashBinDao = (HashBinDao)hashBinDao;
         }
 
-        public override void InsertHashDataForTrack(IEnumerable<HashedFingerprint> hashes, IModelReference trackReference)
+        public override bool SupportsBatchedSubFingerprintQuery
         {
-            hashBinDao.InsertHashDataForTrack(hashes, trackReference);
+            get
+            {
+                return true;
+            }
         }
     }
 }

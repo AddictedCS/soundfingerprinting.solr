@@ -24,8 +24,5 @@
 
         [SolrField("trackLengthSec")]
         public double TrackLengthSec { get; set; }
-
-        [SolrField("groupId")]
-        public string GroupId { get; set; }
     }
 }
