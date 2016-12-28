@@ -12,6 +12,8 @@
     using SolrNet;
     using SolrNet.Commands.Parameters;
 
+    using SoundFingerprinting.Solr.Config;
+
     [TestFixture]
     public class SubFingerprintDaoTest
     {
@@ -19,6 +21,7 @@
         private Mock<IDictionaryToHashConverter> dictionaryToHashConverter; 
         private Mock<IHashConverter> hashConverter;
         private Mock<ISolrQueryBuilder> solrQueryBuilder;
+        private Mock<ISoundFingerprintingSolrConfig> solrConfig;
 
         private SubFingerprintDao subFingerprintDao;
 
@@ -29,8 +32,9 @@
             dictionaryToHashConverter = new Mock<IDictionaryToHashConverter>(MockBehavior.Strict);
             hashConverter = new Mock<IHashConverter>(MockBehavior.Strict);
             solrQueryBuilder = new Mock<ISolrQueryBuilder>(MockBehavior.Strict);
+            solrConfig = new Mock<ISoundFingerprintingSolrConfig>(MockBehavior.Strict);
 
-            subFingerprintDao = new SubFingerprintDao(solr.Object, dictionaryToHashConverter.Object, hashConverter.Object, solrQueryBuilder.Object);
+            subFingerprintDao = new SubFingerprintDao(this.solr.Object, this.dictionaryToHashConverter.Object, this.hashConverter.Object, this.solrQueryBuilder.Object, this.solrConfig.Object);
         }
 
         [Test]
@@ -47,18 +51,25 @@
             solrQueryBuilder.Setup(bld => bld.BuildReadQueryForHashesAndThreshold(It.IsAny<IEnumerable<long[]>>(), 5))
                                              .Returns("query")
                                              .Callback((IEnumerable<long[]> h, int t) => batchSizes.Add(h.Count()));
-            solr.Setup(opr => opr.Query(It.IsAny<SolrQuery>(), It.IsAny<QueryOptions>())).Returns(new SolrQueryResults<SubFingerprintDTO>());
-
-            var allResults = subFingerprintDao.ReadSubFingerprints(hashes, 5, new string[0]);
-
-            CollectionAssert.AreEqual(
-                new List<int>
+            solrQueryBuilder.Setup(bld => bld.BuildQueryForClusters(new[] { "CA" })).Returns("clusters:(CA)");
+            solr.Setup(opr => opr.Query(It.IsAny<SolrQuery>(), It.IsAny<QueryOptions>())).Returns(new SolrQueryResults<SubFingerprintDTO>())
+                .Callback((SolrQuery q, QueryOptions opts) =>
                     {
-                        SubFingerprintDao.BatchSize,
-                        SubFingerprintDao.BatchSize,
-                        FingerprintsCount % SubFingerprintDao.BatchSize
-                    },
-                batchSizes);
+                        Assert.AreEqual("query", q.Query);
+                        var options = opts.ExtraParams.ToDictionary(ks => ks.Key, vs => vs.Value);
+                        Assert.AreEqual("true", options["preferLocalShards"]);
+                        var filters = opts.FilterQueries;
+                        Assert.AreEqual(1, filters.Count);
+                        Assert.AreEqual("clusters:(CA)", ((SolrQuery)filters.First()).Query);
+                    });
+
+            const int BatchSize = 50;
+            solrConfig.Setup(config => config.QueryBatchSize).Returns(BatchSize);
+            solrConfig.Setup(config => config.PreferLocalShards).Returns(true);
+
+            subFingerprintDao.ReadSubFingerprints(hashes, 5, new[] { "CA" });
+
+            CollectionAssert.AreEqual(new List<int> { BatchSize, BatchSize, BatchSize, BatchSize, BatchSize, FingerprintsCount % BatchSize }, batchSizes);
         }
 
         [Test]

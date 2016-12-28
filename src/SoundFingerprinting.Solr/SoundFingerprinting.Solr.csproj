@@ -81,6 +81,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config\ISoundFingerprintingSolrConfig.cs" />
+    <Compile Include="Config\SoundFingerprintingSolrConfig.cs" />
+    <Compile Include="Config\SoundFingerprintingSolrConfigurationSection.cs" />
     <Compile Include="Converters\DictionaryToHashConverter.cs" />
     <Compile Include="Converters\IDictionaryToHashConverter.cs" />
     <Compile Include="DAO\TrackDTO.cs" />

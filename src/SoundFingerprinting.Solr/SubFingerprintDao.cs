@@ -15,30 +15,30 @@
     using SoundFingerprinting.Data;
     using SoundFingerprinting.Infrastructure;
     using SoundFingerprinting.Math;
+    using SoundFingerprinting.Solr.Config;
     using SoundFingerprinting.Solr.Converters;
     using SoundFingerprinting.Solr.DAO;
 
     internal class SubFingerprintDao : ISubFingerprintDao
     {
-        internal const int BatchSize = 100;
-
         private readonly int fingerprintLength;
-
         private readonly ISolrOperations<SubFingerprintDTO> solr;
         private readonly IDictionaryToHashConverter dictionaryToHashConverter;
         private readonly IHashConverter hashConverter;
         private readonly ISolrQueryBuilder solrQueryBuilder;
+        private readonly ISoundFingerprintingSolrConfig solrConfig;
 
         public SubFingerprintDao()
             : this(
                 DependencyResolver.Current.Get<ISolrOperations<SubFingerprintDTO>>(),
                 DependencyResolver.Current.Get<IDictionaryToHashConverter>(),
                 DependencyResolver.Current.Get<IHashConverter>(),
-                DependencyResolver.Current.Get<ISolrQueryBuilder>())
+                DependencyResolver.Current.Get<ISolrQueryBuilder>(),
+                DependencyResolver.Current.Get<ISoundFingerprintingSolrConfig>())
         {
         }
 
-        internal SubFingerprintDao(ISolrOperations<SubFingerprintDTO> solr, IDictionaryToHashConverter dictionaryToHashConverter, IHashConverter hashConverter, ISolrQueryBuilder solrQueryBuilder)
+        internal SubFingerprintDao(ISolrOperations<SubFingerprintDTO> solr, IDictionaryToHashConverter dictionaryToHashConverter, IHashConverter hashConverter, ISolrQueryBuilder solrQueryBuilder, ISoundFingerprintingSolrConfig solrConfig)
         {
             this.solr = solr;
             this.dictionaryToHashConverter = dictionaryToHashConverter;
@@ -46,6 +46,7 @@
             this.solrQueryBuilder = solrQueryBuilder;
             var hashinConfig = new DefaultHashingConfig();
             fingerprintLength = hashinConfig.NumberOfLSHTables * hashinConfig.NumberOfMinHashesPerTable;
+            this.solrConfig = solrConfig;
         }
 
         public void InsertHashDataForTrack(IEnumerable<HashedFingerprint> hashes, IModelReference trackReference)
@@ -82,11 +83,19 @@
             int total = enumerable.Count();
             var result = new HashSet<SubFingerprintData>();
             var filterQuery = GetFilterQueries(clusters);
-            for (int i = 0; i < total; i += BatchSize)
+            int batchSize = solrConfig.QueryBatchSize;
+            bool preferLocalShards = solrConfig.PreferLocalShards;
+            for (int i = 0; i < total; i += batchSize)
             {
-                var batch = enumerable.Skip(i).Take(BatchSize);
+                var batch = enumerable.Skip(i).Take(batchSize);
                 string queryString = solrQueryBuilder.BuildReadQueryForHashesAndThreshold(batch, threshold);
-                var results = solr.Query(new SolrQuery(queryString), new QueryOptions { FilterQueries = filterQuery });
+                var results = solr.Query(
+                    new SolrQuery(queryString),
+                    new QueryOptions
+                        {
+                            FilterQueries = filterQuery,
+                            ExtraParams = new Dictionary<string, string> { { "preferLocalShards", preferLocalShards.ToString().ToLower() } }
+                        });
                 result.UnionWith(ConvertResults(results));
             }
 
