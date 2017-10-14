@@ -11,14 +11,13 @@ _soundfingerprinting.solr_ is [Solr](http://lucene.apache.org/solr) backend for 
 ```xml
 <configuration>
   <configSections>
-    <section name="solr" type="Ninject.Integration.SolrNet.Config.SolrConfigurationSection, Ninject.Integration.SolrNet" />
+    <section name="solr" type="SoundFingerprinting.Solr.Config.SoundFingerprintingSolrConfigurationSection, SoundFingerprinting.Solr" />
   </configSections>
-  <solr>
+  <solr queryBatchSize="50" preferLocalShards="true">
     <server id="tracks" url="http://localhost:8983/solr/sf_tracks" documentType="SoundFingerprinting.Solr.DAO.TrackDTO, SoundFingerprinting.Solr" />
     <server id="fingerprints" url="http://localhost:8983/solr/sf_fingerprints" documentType="SoundFingerprinting.Solr.DAO.SubFingerprintDTO, SoundFingerprinting.Solr" />
   </solr>
 </configuration>
-
 ```
 ### Try it with Docker
 
