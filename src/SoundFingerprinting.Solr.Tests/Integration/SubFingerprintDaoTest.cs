@@ -45,8 +45,8 @@
                             new HashedFingerprint(
                                 GenericSignature(),
                                 genericHashBuckets,
-                                sequenceNumber,
-                                sequenceNumber * 0.928,
+                                (uint)sequenceNumber,
+                                sequenceNumber * 0.928f,
                                 Enumerable.Empty<string>()));
 
             InsertHashedFingerprintsForTrack(hashedFingerprints, trackReference);
@@ -145,7 +145,12 @@
             var hashedFingerprintsForFirstTrack =
                 fingerprintCommandBuilder.BuildFingerprintCommand()
                     .From(GetAudioSamples())
-                    .WithFingerprintConfig(config => { config.Clusters = clusters; })
+                    .WithFingerprintConfig(
+                        config =>
+                        {
+                            config.Clusters = clusters;
+                            return config;
+                        })
                     .UsingServices(audioService)
                     .Hash()
                     .Result;
