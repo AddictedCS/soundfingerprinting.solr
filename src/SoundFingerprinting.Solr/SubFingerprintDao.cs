@@ -123,7 +123,7 @@
                 SubFingerprintId = Guid.NewGuid().ToString(),
                 Hashes = dictionaryToHashConverter.FromHashesToSolrDictionary(hash.HashBins),
                 SequenceAt = hash.StartsAt,
-                SequenceNumber = hash.SequenceNumber,
+                SequenceNumber = (int)hash.SequenceNumber,
                 TrackId = SolrModelReference.GetId(trackReference),
                 Clusters = hash.Clusters
             };
@@ -133,7 +133,7 @@
         {
             long[] hashBins = dictionaryToHashConverter.FromSolrDictionaryToHashes(subFingerprintDto.Hashes);
             byte[] signature = hashConverter.ToBytes(hashBins, fingerprintLength);
-            return new HashedFingerprint(signature, hashBins, subFingerprintDto.SequenceNumber, subFingerprintDto.SequenceAt, subFingerprintDto.Clusters);
+            return new HashedFingerprint(signature, hashBins, (uint)subFingerprintDto.SequenceNumber, (float)subFingerprintDto.SequenceAt, subFingerprintDto.Clusters);
         }
 
         private SubFingerprintData GetSubFingerprintData(SubFingerprintDTO dto)
@@ -141,8 +141,8 @@
             long[] resultHashBins = this.dictionaryToHashConverter.FromSolrDictionaryToHashes(dto.Hashes);
             var sub = new SubFingerprintData(
                 resultHashBins,
-                dto.SequenceNumber,
-                dto.SequenceAt,
+                (uint)dto.SequenceNumber,
+                (float)dto.SequenceAt,
                 new SolrModelReference(dto.SubFingerprintId),
                 new SolrModelReference(dto.TrackId));
             return sub;
