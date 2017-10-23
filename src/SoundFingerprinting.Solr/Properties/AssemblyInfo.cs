@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
 [assembly: Guid("5c58308b-745e-4d08-8435-3e3751c42390")]
-[assembly: AssemblyInformationalVersion("3.2.0-beta")]
+[assembly: AssemblyInformationalVersion("4.0.0")]
 [assembly: AssemblyVersion("4.0.0")]
 [assembly: AssemblyFileVersion("4.0.0")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
