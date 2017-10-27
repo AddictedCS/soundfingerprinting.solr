@@ -34,7 +34,7 @@
             solrQueryBuilder = new Mock<ISolrQueryBuilder>(MockBehavior.Strict);
             solrConfig = new Mock<ISoundFingerprintingSolrConfig>(MockBehavior.Strict);
 
-            subFingerprintDao = new SubFingerprintDao(this.solr.Object, this.dictionaryToHashConverter.Object, this.hashConverter.Object, this.solrQueryBuilder.Object, this.solrConfig.Object);
+            subFingerprintDao = new SubFingerprintDao(this.solr.Object, this.dictionaryToHashConverter.Object, this.solrQueryBuilder.Object, this.solrConfig.Object);
         }
 
         [Test]

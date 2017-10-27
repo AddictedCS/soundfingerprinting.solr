@@ -43,7 +43,6 @@
                     .Select(
                         sequenceNumber =>
                             new HashedFingerprint(
-                                GenericSignature(),
                                 genericHashBuckets,
                                 (uint)sequenceNumber,
                                 sequenceNumber * 0.928f,
