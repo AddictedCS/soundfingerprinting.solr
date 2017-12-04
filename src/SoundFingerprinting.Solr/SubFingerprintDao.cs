@@ -6,13 +6,14 @@
     using System.Globalization;
     using System.Linq;
 
+    using Microsoft.Practices.ServiceLocation;
+
     using SolrNet;
     using SolrNet.Commands.Parameters;
 
     using SoundFingerprinting.DAO;
     using SoundFingerprinting.DAO.Data;
     using SoundFingerprinting.Data;
-    using SoundFingerprinting.Infrastructure;
     using SoundFingerprinting.Solr.Config;
     using SoundFingerprinting.Solr.Converters;
     using SoundFingerprinting.Solr.DAO;
@@ -27,10 +28,10 @@
 
         public SubFingerprintDao()
             : this(
-                DependencyResolver.Current.Get<ISolrOperations<SubFingerprintDTO>>(),
-                DependencyResolver.Current.Get<IDictionaryToHashConverter>(),
-                DependencyResolver.Current.Get<ISolrQueryBuilder>(),
-                DependencyResolver.Current.Get<ISoundFingerprintingSolrConfig>())
+                ServiceLocator.Current.GetInstance<ISolrOperations<SubFingerprintDTO>>(),
+                new DictionaryToHashConverter(),
+                new SolrQueryBuilder(),
+                ServiceLocator.Current.GetInstance<ISoundFingerprintingSolrConfig>())
         {
         }
 
@@ -56,7 +57,7 @@
             return results.Select(GetHashedFingerprint).ToList();
         }
 
-        public IEnumerable<SubFingerprintData> ReadSubFingerprints(long[] hashBins, int thresholdVotes, IEnumerable<string> clusters)
+        public IEnumerable<SubFingerprintData> ReadSubFingerprints(int[] hashBins, int thresholdVotes, IEnumerable<string> clusters)
         {
             string queryString = solrQueryBuilder.BuildReadQueryForHashes(hashBins);
             var results = solr.Query(
@@ -70,9 +71,9 @@
             return ConvertResults(results);
         }
         
-        public ISet<SubFingerprintData> ReadSubFingerprints(IEnumerable<long[]> hashes, int threshold, IEnumerable<string> clusters)
+        public ISet<SubFingerprintData> ReadSubFingerprints(IEnumerable<int[]> hashes, int threshold, IEnumerable<string> clusters)
         {
-            var enumerable = hashes as List<long[]> ?? hashes.ToList();
+            var enumerable = hashes as List<int[]> ?? hashes.ToList();
             int total = enumerable.Count;
             var result = new HashSet<SubFingerprintData>();
             var filterQuery = GetFilterQueries(clusters);
@@ -124,13 +125,13 @@
 
         private HashedFingerprint GetHashedFingerprint(SubFingerprintDTO subFingerprintDto)
         {
-            long[] hashBins = dictionaryToHashConverter.FromSolrDictionaryToHashes(subFingerprintDto.Hashes);
+            int[] hashBins = dictionaryToHashConverter.FromSolrDictionaryToHashes(subFingerprintDto.Hashes);
             return new HashedFingerprint(hashBins, (uint)subFingerprintDto.SequenceNumber, (float)subFingerprintDto.SequenceAt, subFingerprintDto.Clusters);
         }
 
         private SubFingerprintData GetSubFingerprintData(SubFingerprintDTO dto)
         {
-            long[] resultHashBins = dictionaryToHashConverter.FromSolrDictionaryToHashes(dto.Hashes);
+            int[] resultHashBins = dictionaryToHashConverter.FromSolrDictionaryToHashes(dto.Hashes);
             return new SubFingerprintData(
                 resultHashBins,
                 (uint)dto.SequenceNumber,

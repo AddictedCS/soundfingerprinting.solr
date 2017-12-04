@@ -4,9 +4,9 @@ namespace SoundFingerprinting.Solr
 
     internal interface ISolrQueryBuilder
     {
-        string BuildReadQueryForHashes(long[] hashBins);
+        string BuildReadQueryForHashes(int[] hashBins);
 
-        string BuildReadQueryForHashesAndThreshold(IEnumerable<long[]> allHashes, int thresholdVotes);
+        string BuildReadQueryForHashesAndThreshold(IEnumerable<int[]> allHashes, int thresholdVotes);
 
         string BuildReadQueryForTitleAndArtist(string title, string artist);
 

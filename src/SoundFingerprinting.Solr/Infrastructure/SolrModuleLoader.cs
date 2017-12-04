@@ -8,19 +8,23 @@
     using SolrNet;
     using SolrNet.Impl;
 
-    using SoundFingerprinting.Infrastructure;
     using SoundFingerprinting.Solr.Config;
     using SoundFingerprinting.Solr.Converters;
 
-    public class SolrModuleLoader : IModuleLoader
+    public class SolrModuleLoader
     {
-        public void LoadAssemblyBindings(IKernel kernel)
+        static SolrModuleLoader()
+        {
+            var kernel = new StandardKernel();
+            LoadAssemblyBindings(kernel);
+        }
+
+        private static void LoadAssemblyBindings(IKernel kernel)
         {
             var solrConfig = (SoundFingerprintingSolrConfigurationSection)ConfigurationManager.GetSection("solr");
             
             kernel.Load(new SolrNetModule(solrConfig.SolrServers));
-            kernel.Bind<IDictionaryToHashConverter>().To<DictionaryToHashConverter>().InSingletonScope();
-            kernel.Bind<ISolrQueryBuilder>().To<SolrQueryBuilder>().InSingletonScope();
+
             kernel.Bind<ISoundFingerprintingSolrConfig>().ToConstant(
                 new SoundFingerprintingSolrConfig(solrConfig.QueryBatchSize, solrConfig.PreferLocalShards));
 

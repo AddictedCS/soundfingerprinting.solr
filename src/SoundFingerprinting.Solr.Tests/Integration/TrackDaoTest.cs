@@ -44,6 +44,22 @@
         }
 
         [Test]
+        public void ShouldReadMultipleTracks()
+        {
+            var refs = new List<IModelReference>();
+            var l = 10;
+            for (int i = 0; i < l; ++i)
+            {
+                var track = new TrackData($"isrc_{i}", "artist", "title", "album", 1986, 100);
+                var reference = trackDao.InsertTrack(track);
+                refs.Add(reference);
+            }
+
+            var actual = trackDao.ReadTracks(refs);
+            Assert.AreEqual(10, actual.Count);
+        }
+
+        [Test]
         public void ShouldReadNonExistingTrack()
         {
             var actual = trackDao.ReadTrack(new SolrModelReference("256-256"));

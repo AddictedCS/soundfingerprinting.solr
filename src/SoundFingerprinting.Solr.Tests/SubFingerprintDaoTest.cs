@@ -40,15 +40,15 @@
         [Test]
         public void ShouldBatchQueriesToSolr()
         {
-            List<long[]> hashes = new List<long[]>();
+            var hashes = new List<int[]>();
             const int FingerprintsCount = 256;
             for (int i = 0; i < FingerprintsCount; ++i)
             {
-                hashes.Add(new long[25]);
+                hashes.Add(new int[25]);
             }
 
             List<int> batchSizes = new List<int>();
-            solrQueryBuilder.Setup(bld => bld.BuildReadQueryForHashesAndThreshold(It.IsAny<IEnumerable<long[]>>(), 5))
+            solrQueryBuilder.Setup(bld => bld.BuildReadQueryForHashesAndThreshold(It.IsAny<IEnumerable<int[]>>(), 5))
                                              .Returns("query")
                                              .Callback((IEnumerable<long[]> h, int t) => batchSizes.Add(h.Count()));
             solrQueryBuilder.Setup(bld => bld.BuildQueryForClusters(new[] { "CA" })).Returns("clusters:(CA)");
@@ -75,7 +75,7 @@
         [Test]
         public void ShouldSpecifyMinimalMatchQueryOption()
         {
-            solrQueryBuilder.Setup(bld => bld.BuildReadQueryForHashes(It.IsAny<long[]>())).Returns("query");
+            solrQueryBuilder.Setup(bld => bld.BuildReadQueryForHashes(It.IsAny<int[]>())).Returns("query");
 
             solr.Setup(opr => opr.Query(It.IsAny<SolrQuery>(), It.IsAny<QueryOptions>())).Returns(new SolrQueryResults<SubFingerprintDTO>())
                 .Callback((SolrQuery q, QueryOptions opts) =>
@@ -86,13 +86,13 @@
                         Assert.AreEqual("5", options["mm"]);
                     });
             
-            subFingerprintDao.ReadSubFingerprints(new long[25], 5, new string[0]);
+            subFingerprintDao.ReadSubFingerprints(new int[25], 5, new string[0]);
         }
 
         [Test]
         public void ShouldSpecifyFilterQueries()
         {
-            solrQueryBuilder.Setup(bld => bld.BuildReadQueryForHashes(It.IsAny<long[]>())).Returns("query");
+            solrQueryBuilder.Setup(bld => bld.BuildReadQueryForHashes(It.IsAny<int[]>())).Returns("query");
             solrQueryBuilder.Setup(bld => bld.BuildQueryForClusters(It.IsAny<IEnumerable<string>>())).Returns(
                 "filter-query");
 
@@ -104,7 +104,7 @@
                     Assert.AreEqual("filter-query", filter.Query);
                 });
 
-            subFingerprintDao.ReadSubFingerprints(new long[25], 5, new[] { "CA", "LA" });
+            subFingerprintDao.ReadSubFingerprints(new int[25], 5, new[] { "CA", "LA" });
         }
 
         [Test]
@@ -116,15 +116,15 @@
                           {
                               Clusters = new[] { "CA" },
                               SubFingerprintId = "123-123",
-                              Hashes = new Dictionary<int, long>(),
+                              Hashes = new Dictionary<int, int>(),
                               SequenceAt = 10d,
                               SequenceNumber = 10,
                               TrackId = "track-id"
                           };
             results.AddRange(new List<SubFingerprintDTO> { dto });
             solr.Setup(s => s.Query("trackId:track-id")).Returns(results);
-            dictionaryToHashConverter.Setup(dhc => dhc.FromSolrDictionaryToHashes(It.IsAny<IDictionary<int, long>>()))
-                .Returns(new long[0]);
+            dictionaryToHashConverter.Setup(dhc => dhc.FromSolrDictionaryToHashes(It.IsAny<IDictionary<int, int>>()))
+                .Returns(new int[0]);
             hashConverter.Setup(hc => hc.ToBytes(It.IsAny<long[]>(), It.IsAny<int>())).Returns(new byte[0]);
 
             var subs = subFingerprintDao.ReadHashedFingerprintsByTrackReference(trackReference);

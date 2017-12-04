@@ -9,18 +9,16 @@
    
 	<field name="subFingerprintId" type="string" indexed="true" stored="true" required="true" multiValued="false" omitTermFreqAndPositions="true" omitNorms="true" />
 	<field name="trackId" type="string" indexed="true" stored="true" required="true" multiValued="false" omitTermFreqAndPositions="true" omitNorms="true" />
-	<dynamicField name="hashTable_*" type="long" indexed="true" stored="true" omitTermFreqAndPositions="true" omitNorms="true" />
-	<field name="sequenceAt" type="double" indexed="false" stored="true" required="false" multiValued="false" omitTermFreqAndPositions="true" omitNorms="true" />
+	<dynamicField name="hashTable_*" type="int" indexed="true" stored="true" omitTermFreqAndPositions="true" omitNorms="true" />
+	<field name="sequenceAt" type="float" indexed="false" stored="true" required="false" multiValued="false" omitTermFreqAndPositions="true" omitNorms="true" />
 	<field name="sequenceNumber" type="int" indexed="false" stored="true" required="false" multiValued="false" omitTermFreqAndPositions="true" omitNorms="true" />
 	<field name="clusters" type="string" indexed="true" stored="true" required="false" multiValued="true" omitTermFreqAndPositions="true" omitNorms="true" />
 
 	<uniqueKey>subFingerprintId</uniqueKey>
 
 	<fieldType name="string" class="solr.StrField" sortMissingLast="true" />
-	<fieldType name="long" class="solr.TrieLongField" precisionStep="0" positionIncrementGap="0" />
 	<fieldType name="boolean" class="solr.BoolField" sortMissingLast="true" />
 	<fieldType name="int" class="solr.TrieIntField" precisionStep="0" positionIncrementGap="0" />
 	<fieldType name="float" class="solr.TrieFloatField" precisionStep="0" positionIncrementGap="0" />
-	<fieldType name="double" class="solr.TrieDoubleField" precisionStep="0" positionIncrementGap="0" />
-
+	
 </schema>

@@ -12,7 +12,7 @@
         [Test]
         public void ShouldBuildReadWithThresholdsQuery()
         {
-            long[] hashes = new long[] { 10, 11, 12, 21, 22 };
+            int[] hashes = { 10, 11, 12, 21, 22 };
 
             string query = queryBuilder.BuildReadQueryForHashes(hashes);
 
@@ -38,9 +38,9 @@
         [Test]
         public void ShouldBuildNestedQueryForMultipleFingerprints()
         {
-            var fingerprints = new List<long[]> 
+            var fingerprints = new List<int[]> 
                 {
-                    new long[] { 10, 11, 12, 21, 22 }, new long[] { 12, 13, 14, 15, 16 } 
+                    new[] { 10, 11, 12, 21, 22 }, new[] { 12, 13, 14, 15, 16 } 
                 };
 
             string query = queryBuilder.BuildReadQueryForHashesAndThreshold(fingerprints, 3);

@@ -14,8 +14,8 @@
         [Test]
         public void ShouldConvertToAndFrom()
         {
-            long[] hashBins = new long[] { 3, 4, 5, 7, 8 };
-            Dictionary<int, long> hashTables = dictionaryToHashConverter.FromHashesToSolrDictionary(hashBins);
+            int[] hashBins = { 3, 4, 5, 7, 8 };
+            Dictionary<int, int> hashTables = dictionaryToHashConverter.FromHashesToSolrDictionary(hashBins);
 
             Assert.AreEqual(3, hashTables[0]);
             Assert.AreEqual(4, hashTables[1]);
@@ -23,7 +23,7 @@
             Assert.AreEqual(7, hashTables[3]);
             Assert.AreEqual(8, hashTables[4]);
 
-            long[] actual = dictionaryToHashConverter.FromSolrDictionaryToHashes(hashTables);
+            int[] actual = dictionaryToHashConverter.FromSolrDictionaryToHashes(hashTables);
 
             CollectionAssert.AreEqual(hashBins, actual);
         }

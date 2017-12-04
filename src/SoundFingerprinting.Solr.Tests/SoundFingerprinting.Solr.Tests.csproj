@@ -94,16 +94,13 @@
       <HintPath>..\packages\SolrNet.0.5.0-alpha2\lib\SolrNet.dll</HintPath>
     </Reference>
     <Reference Include="SoundFingerprinting, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SoundFingerprinting.4.1.0-alpha\lib\net45\SoundFingerprinting.dll</HintPath>
+      <HintPath>..\packages\SoundFingerprinting.4.1.0\lib\net45\SoundFingerprinting.dll</HintPath>
     </Reference>
     <Reference Include="SoundFingerprinting.Audio, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SoundFingerprinting.4.1.0-alpha\lib\net45\SoundFingerprinting.Audio.dll</HintPath>
+      <HintPath>..\packages\SoundFingerprinting.4.1.0\lib\net45\SoundFingerprinting.Audio.dll</HintPath>
     </Reference>
     <Reference Include="SoundFingerprinting.Audio.NAudio, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SoundFingerprinting.4.1.0-alpha\lib\net45\SoundFingerprinting.Audio.NAudio.dll</HintPath>
-    </Reference>
-    <Reference Include="SoundFingerprinting.Infrastructure, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SoundFingerprinting.4.1.0-alpha\lib\net45\SoundFingerprinting.Infrastructure.dll</HintPath>
+      <HintPath>..\packages\SoundFingerprinting.4.1.0\lib\net45\SoundFingerprinting.Audio.NAudio.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />

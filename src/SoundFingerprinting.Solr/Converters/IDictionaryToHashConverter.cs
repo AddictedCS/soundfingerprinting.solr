@@ -4,8 +4,8 @@ namespace SoundFingerprinting.Solr.Converters
 
     internal interface IDictionaryToHashConverter
     {
-        Dictionary<int, long> FromHashesToSolrDictionary(long[] hashBins);
+        Dictionary<int, int> FromHashesToSolrDictionary(int[] hashBins);
 
-        long[] FromSolrDictionaryToHashes(IDictionary<int, long> hashTables);
+        int[] FromSolrDictionaryToHashes(IDictionary<int, int> hashTables);
     }
 }

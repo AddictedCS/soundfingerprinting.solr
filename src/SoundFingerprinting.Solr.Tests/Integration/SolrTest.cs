@@ -4,13 +4,14 @@
     using System.Configuration;
     using System.Linq;
 
+    using Microsoft.Practices.ServiceLocation;
+
     using Ninject.Integration.SolrNet.Config;
 
     using NUnit.Framework;
 
     using SolrNet;
 
-    using SoundFingerprinting.Infrastructure;
     using SoundFingerprinting.Solr.DAO;
 
     [TestFixture]
@@ -20,28 +21,28 @@
         [Test]
         public void SolrServerIsAccessible()
         {
-            var solr = DependencyResolver.Current.Get<ISolrOperations<SubFingerprintDTO>>();
+            var solr = ServiceLocator.Current.GetInstance<ISolrOperations<SubFingerprintDTO>>();
             solr.Ping();
         }
 
         [Test]
         public void SolrServerCanStoreSubFingerprints()
         {
-            var solr = DependencyResolver.Current.Get<ISolrOperations<SubFingerprintDTO>>();
+            var solr = ServiceLocator.Current.GetInstance<ISolrOperations<SubFingerprintDTO>>();
 
             solr.Add(
                 new SubFingerprintDTO
                     {
                         SubFingerprintId = "321",
                         TrackId = "123",
-                        Hashes = new Dictionary<int, long> { { 1, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 } }
+                        Hashes = new Dictionary<int, int> { { 1, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 } }
                     });
             solr.Commit();
 
             var docs = solr.Query("subFingerprintId:321");
 
             Assert.AreEqual(1, docs.Count);
-            this.TearDownDocs(solr, docs);
+            TearDownDocs(solr, docs);
         }
 
         [Test]
@@ -51,17 +52,17 @@
                 {
                     SubFingerprintId = "1",
                     TrackId = "1",
-                    Hashes = new Dictionary<int, long> { { 0, 10 }, { 1, 11 }, { 2, 12 }, { 3, 13 }, { 4, 14 } }
+                    Hashes = new Dictionary<int, int> { { 0, 10 }, { 1, 11 }, { 2, 12 }, { 3, 13 }, { 4, 14 } }
                 };
 
             var doc2 = new SubFingerprintDTO
                 {
                     SubFingerprintId = "2",
                     TrackId = "2",
-                    Hashes = new Dictionary<int, long> { { 0, 10 }, { 1, 11 }, { 2, 20 }, { 3, 21 }, { 4, 22 } }
+                    Hashes = new Dictionary<int, int> { { 0, 10 }, { 1, 11 }, { 2, 20 }, { 3, 21 }, { 4, 22 } }
                 };
 
-            var solr = DependencyResolver.Current.Get<ISolrOperations<SubFingerprintDTO>>();
+            var solr = ServiceLocator.Current.GetInstance<ISolrOperations<SubFingerprintDTO>>();
 
             solr.Add(doc1);
             solr.Add(doc2);
@@ -88,8 +89,8 @@
         [Test]
         public void ShouldLoadConfigEntriesInNinjectKernel()
         {
-            var solrForTracks = DependencyResolver.Current.Get<ISolrOperations<TrackDTO>>();
-            var solrForSubFingerprints = DependencyResolver.Current.Get<ISolrOperations<SubFingerprintDTO>>();
+            var solrForTracks = ServiceLocator.Current.GetInstance<ISolrOperations<TrackDTO>>();
+            var solrForSubFingerprints = ServiceLocator.Current.GetInstance<ISolrOperations<SubFingerprintDTO>>();
 
             Assert.IsNotNull(solrForTracks);
             Assert.IsNotNull(solrForSubFingerprints);
