@@ -50,7 +50,7 @@
             List<int> batchSizes = new List<int>();
             solrQueryBuilder.Setup(bld => bld.BuildReadQueryForHashesAndThreshold(It.IsAny<IEnumerable<int[]>>(), 5))
                                              .Returns("query")
-                                             .Callback((IEnumerable<long[]> h, int t) => batchSizes.Add(h.Count()));
+                                             .Callback((IEnumerable<int[]> h, int t) => batchSizes.Add(h.Count()));
             solrQueryBuilder.Setup(bld => bld.BuildQueryForClusters(new[] { "CA" })).Returns("clusters:(CA)");
             solr.Setup(opr => opr.Query(It.IsAny<SolrQuery>(), It.IsAny<QueryOptions>())).Returns(new SolrQueryResults<SubFingerprintDTO>())
                 .Callback((SolrQuery q, QueryOptions opts) =>
@@ -122,7 +122,7 @@
                               TrackId = "track-id"
                           };
             results.AddRange(new List<SubFingerprintDTO> { dto });
-            solr.Setup(s => s.Query("trackId:track-id")).Returns(results);
+            solr.Setup(s => s.Query(It.IsAny<SolrQuery>(), It.IsAny<QueryOptions>())).Returns(results);
             dictionaryToHashConverter.Setup(dhc => dhc.FromSolrDictionaryToHashes(It.IsAny<IDictionary<int, int>>()))
                 .Returns(new int[0]);
             hashConverter.Setup(hc => hc.ToBytes(It.IsAny<long[]>(), It.IsAny<int>())).Returns(new byte[0]);

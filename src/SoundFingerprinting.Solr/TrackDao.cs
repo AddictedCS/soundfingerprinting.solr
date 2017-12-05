@@ -4,9 +4,10 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    using Microsoft.Practices.ServiceLocation;
+    using CommonServiceLocator;
 
     using SolrNet;
+    using SolrNet.Commands.Parameters;
 
     using SoundFingerprinting.DAO;
     using SoundFingerprinting.DAO.Data;
@@ -38,7 +39,7 @@
 
         public IModelReference InsertTrack(TrackData track)
         {
-            Guid id = Guid.NewGuid();
+            var id = Guid.NewGuid();
             var dto = new TrackDTO
                 {
                     Id = id.ToString(),
@@ -62,15 +63,17 @@
             var trackId = SolrModelReference.GetId(trackReference);
             var query = new SolrQuery($"trackId:{trackId}");
 
-            var results = solrForTracksCore.Query(query);
+            var results = solrForTracksCore.Query(
+                query,
+                new QueryOptions { ExtraParams = new Dictionary<string, string> { { "wt", "xml" } } });
             return FirstFromResultSet(results);
         }
 
         public List<TrackData> ReadTracks(IEnumerable<IModelReference> ids)
         {
-            string sids = string.Join(",", ids.Select(SolrModelReference.GetId));
+            string sids = string.Join(",", ids.Select(id => $"\"{SolrModelReference.GetId(id)}\""));
             var query = new SolrQuery($"trackId:({sids})");
-            var results = solrForTracksCore.Query(query);
+            var results = solrForTracksCore.Query(query, new QueryOptions { ExtraParams = new Dictionary<string, string> { { "wt", "xml" } } });
             return AllFromResultSet(results).ToList();
         }
 
@@ -85,21 +88,23 @@
         public IList<TrackData> ReadTrackByArtistAndTitleName(string artist, string title)
         {
             var query = solrQueryBuilder.BuildReadQueryForTitleAndArtist(title, artist);
-            var results = solrForTracksCore.Query(query);
+            var results = solrForTracksCore.Query(
+                query,
+                new QueryOptions { ExtraParams = new Dictionary<string, string> { { "wt", "xml" } } });
             return AllFromResultSet(results);
         }
         
         public TrackData ReadTrackByISRC(string isrc)
         {
-            var query = new SolrQuery(string.Format("isrc:{0}", isrc));
-            var results = solrForTracksCore.Query(query);
+            var query = new SolrQuery($"isrc:{isrc}");
+            var results = solrForTracksCore.Query(query, new QueryOptions { ExtraParams = new Dictionary<string, string> { { "wt", "xml" } } });
             return FirstFromResultSet(results);
         }
 
         public IList<TrackData> ReadAll()
         {
             var query = new SolrQuery("*:*");
-            var results = solrForTracksCore.Query(query);
+            var results = solrForTracksCore.Query(query, new QueryOptions { ExtraParams = new Dictionary<string, string> { { "wt", "xml" } } });
             return AllFromResultSet(results);
         }
 
@@ -107,7 +112,9 @@
         {
             string trackId = SolrModelReference.GetId(trackReference);
             string readAll = $"trackId:{trackId}";
-            var results = solrForSubfingerprintsCore.Query(new SolrQuery(readAll));
+            var results = solrForSubfingerprintsCore.Query(
+                new SolrQuery(readAll),
+                new QueryOptions { ExtraParams = new Dictionary<string, string> { { "wt", "xml" } } });
             var ids = results.Select(dto => dto.SubFingerprintId).ToList();
             solrForSubfingerprintsCore.Delete(ids);
             solrForSubfingerprintsCore.Commit();

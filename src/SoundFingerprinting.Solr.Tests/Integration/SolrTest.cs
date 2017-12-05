@@ -4,13 +4,14 @@
     using System.Configuration;
     using System.Linq;
 
-    using Microsoft.Practices.ServiceLocation;
+    using CommonServiceLocator;
 
     using Ninject.Integration.SolrNet.Config;
 
     using NUnit.Framework;
 
     using SolrNet;
+    using SolrNet.Commands.Parameters;
 
     using SoundFingerprinting.Solr.DAO;
 
@@ -18,6 +19,8 @@
     [Category("IntegrationTest")]
     public class SolrTest
     {
+        private readonly SolrModelService modelService = new SolrModelService();
+
         [Test]
         public void SolrServerIsAccessible()
         {
@@ -30,8 +33,7 @@
         {
             var solr = ServiceLocator.Current.GetInstance<ISolrOperations<SubFingerprintDTO>>();
 
-            solr.Add(
-                new SubFingerprintDTO
+            solr.Add(new SubFingerprintDTO
                     {
                         SubFingerprintId = "321",
                         TrackId = "123",
@@ -39,7 +41,9 @@
                     });
             solr.Commit();
 
-            var docs = solr.Query("subFingerprintId:321");
+            var docs = solr.Query(
+                "subFingerprintId:321",
+                new QueryOptions { ExtraParams = new Dictionary<string, string> { { "wt", "xml" } } });
 
             Assert.AreEqual(1, docs.Count);
             TearDownDocs(solr, docs);
@@ -69,7 +73,9 @@
             solr.Commit();
 
             var query = new SolrQuery("_query_:\"{!edismax mm=4}hashTable_0:10 hashTable_1:11 hashTable_2:12 hashTable_3:21 hashTable_4:22\" _query_:\"{!edismax mm=4}hashTable_0:10 hashTable_1:11 hashTable_2:20 hashTable_3:21 hashTable_4:22\"");
-            var docs = solr.Query(query);
+            var docs = solr.Query(
+                query,
+                new QueryOptions { ExtraParams = new Dictionary<string, string> { { "wt", "xml" } } });
            
             Assert.AreEqual(1, docs.Count);
             var result = docs.First();

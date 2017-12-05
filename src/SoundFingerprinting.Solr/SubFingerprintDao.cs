@@ -6,7 +6,7 @@
     using System.Globalization;
     using System.Linq;
 
-    using Microsoft.Practices.ServiceLocation;
+    using CommonServiceLocator;
 
     using SolrNet;
     using SolrNet.Commands.Parameters;
@@ -53,7 +53,10 @@
 
         public IList<HashedFingerprint> ReadHashedFingerprintsByTrackReference(IModelReference trackReference)
         {
-            var results = solr.Query($"trackId:{SolrModelReference.GetId(trackReference)}");
+            var query = new SolrQuery($"trackId:{SolrModelReference.GetId(trackReference)}");
+            var results = solr.Query(
+                query,
+                new QueryOptions { ExtraParams = new Dictionary<string, string> { { "wt", "xml" } } });
             return results.Select(GetHashedFingerprint).ToList();
         }
 
@@ -86,10 +89,17 @@
                 var results = solr.Query(
                     new SolrQuery(queryString),
                     new QueryOptions
-                        {
-                            FilterQueries = filterQuery,
-                            ExtraParams = new Dictionary<string, string> { { "preferLocalShards", preferLocalShards.ToString().ToLower() } }
-                        });
+                    {
+                        FilterQueries = filterQuery,
+                        ExtraParams =
+                            new Dictionary<string, string>
+                            {
+                                {
+                                    "preferLocalShards", preferLocalShards.ToString().ToLower()
+                                },
+                                { "wt", "xml" }
+                            }
+                    });
                 result.UnionWith(ConvertResults(results));
             }
 
@@ -104,10 +114,11 @@
         private Dictionary<string, string> GetThresholdVotes(int thresholdVotes)
         {
             return new Dictionary<string, string>
-                {
-                    { "defType", "edismax" },
-                    { "mm", thresholdVotes.ToString(CultureInfo.InvariantCulture) }
-                };
+                   {
+                       { "defType", "edismax" },
+                       { "mm", thresholdVotes.ToString(CultureInfo.InvariantCulture) },
+                       { "wt", "xml" }
+                   };
         }
 
         private SubFingerprintDTO GetSubFingerprintDto(IModelReference trackReference, HashedFingerprint hash)

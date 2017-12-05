@@ -14,6 +14,7 @@
     [Category("IntegrationTest")]
     public class TrackDaoTest
     {
+        private readonly SolrModelService modelService = new SolrModelService();
         private readonly TrackDao trackDao = new TrackDao();
 
         [TearDown]

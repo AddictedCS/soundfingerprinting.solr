@@ -18,6 +18,7 @@
     {
         private readonly FingerprintCommandBuilder fingerprintCommandBuilder = new FingerprintCommandBuilder();
         private readonly IAudioService audioService = new NAudioService();
+        private readonly SolrModelService modelService = new SolrModelService();
         private readonly SubFingerprintDao subFingerprintDao = new SubFingerprintDao();
         private readonly TrackDao trackDao = new TrackDao();
 
