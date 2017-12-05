@@ -22,13 +22,6 @@
         private readonly SolrModelService modelService = new SolrModelService();
 
         [Test]
-        public void SolrServerIsAccessible()
-        {
-            var solr = ServiceLocator.Current.GetInstance<ISolrOperations<SubFingerprintDTO>>();
-            solr.Ping();
-        }
-
-        [Test]
         public void SolrServerCanStoreSubFingerprints()
         {
             var solr = ServiceLocator.Current.GetInstance<ISolrOperations<SubFingerprintDTO>>();
