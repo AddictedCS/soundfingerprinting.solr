@@ -10,8 +10,9 @@
     <Copyright>Copyright © Sergiu Ciumac 2017</Copyright>
     <Trademark></Trademark>
     <Culture></Culture>
-    <Version>4.1.0</Version>
-    <FileVersion>4.1.0</FileVersion>
+    <Version>5.0.0.0</Version>
+    <FileVersion>5.0.0.0</FileVersion>
+    <AssemblyVersion>5.0.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

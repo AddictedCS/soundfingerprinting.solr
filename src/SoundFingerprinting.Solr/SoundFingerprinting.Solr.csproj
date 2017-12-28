@@ -7,9 +7,9 @@
     <Description>Solr backend for SoundFingerprinting framework. Allows storing fingerprints in an efficient non-relational storage, with fast retrieval and scalability capabilities</Description>
     <Company>Sergiu Ciumac</Company>
     <Copyright>Copyright © Sergiu Ciumac 2017</Copyright>
-    <Version>4.1.0.0</Version>
-    <AssemblyVersion>4.1.0.0</AssemblyVersion>
-    <FileVersion>4.1.0.0</FileVersion>
+    <Version>5.0.0.0</Version>
+    <AssemblyVersion>5.0.0.0</AssemblyVersion>
+    <FileVersion>5.0.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
