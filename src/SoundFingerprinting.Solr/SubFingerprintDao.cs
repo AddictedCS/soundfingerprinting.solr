@@ -24,18 +24,18 @@
         private readonly IDictionaryToHashConverter dictionaryToHashConverter;
 
         private readonly ISolrQueryBuilder solrQueryBuilder;
-        private readonly ISoundFingerprintingSolrConfig solrConfig;
+        private readonly SoundFingerprintingSolrConfiguration solrConfig;
 
         public SubFingerprintDao()
             : this(
                 ServiceLocator.Current.GetInstance<ISolrOperations<SubFingerprintDTO>>(),
                 new DictionaryToHashConverter(),
                 new SolrQueryBuilder(),
-                ServiceLocator.Current.GetInstance<ISoundFingerprintingSolrConfig>())
+                ServiceLocator.Current.GetInstance<SoundFingerprintingSolrConfiguration>())
         {
         }
 
-        internal SubFingerprintDao(ISolrOperations<SubFingerprintDTO> solr, IDictionaryToHashConverter dictionaryToHashConverter, ISolrQueryBuilder solrQueryBuilder, ISoundFingerprintingSolrConfig solrConfig)
+        internal SubFingerprintDao(ISolrOperations<SubFingerprintDTO> solr, IDictionaryToHashConverter dictionaryToHashConverter, ISolrQueryBuilder solrQueryBuilder, SoundFingerprintingSolrConfiguration solrConfig)
         {
             this.solr = solr;
             this.dictionaryToHashConverter = dictionaryToHashConverter;
