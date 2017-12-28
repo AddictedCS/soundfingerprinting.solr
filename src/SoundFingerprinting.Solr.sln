@@ -1,16 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundFingerprinting.Solr", "SoundFingerprinting.Solr\SoundFingerprinting.Solr.csproj", "{D17D8F7C-44E3-400C-94FF-20E2F3C2EB9E}"
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2010
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoundFingerprinting.Solr", "SoundFingerprinting.Solr\SoundFingerprinting.Solr.csproj", "{D17D8F7C-44E3-400C-94FF-20E2F3C2EB9E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundFingerprinting.Solr.Tests", "SoundFingerprinting.Solr.Tests\SoundFingerprinting.Solr.Tests.csproj", "{6B8D3138-503D-4DD3-8A1F-1A12186DFC3A}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{7E7ADDA6-AE64-49FB-B377-83A5798DF1E2}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoundFingerprinting.Solr.Tests", "SoundFingerprinting.Solr.Tests\SoundFingerprinting.Solr.Tests.csproj", "{6B8D3138-503D-4DD3-8A1F-1A12186DFC3A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,5 +24,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4627731E-DC0F-4731-B882-EBC50FDC526C}
 	EndGlobalSection
 EndGlobal

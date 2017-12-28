@@ -1,37 +1,40 @@
 ﻿namespace SoundFingerprinting.Solr.Infrastructure
 {
-    using System.Configuration;
-
     using CommonServiceLocator;
-
+    using Microsoft.Extensions.Configuration;
     using Ninject;
-    using Ninject.Integration.SolrNet;
-
     using SolrNet;
     using SolrNet.Impl;
-
     using SoundFingerprinting.Solr.Config;
+    using System.IO;
+    using System.Reflection;
 
     internal class SolrModuleLoader
     {
         public void LoadAssemblyBindings()
         {
             var kernel = new StandardKernel();
-            var solrConfig = (SoundFingerprintingSolrConfigurationSection)ConfigurationManager.GetSection("solr");
-            
-            kernel.Load(new SolrNetModule(solrConfig.SolrServers));
 
-            kernel.Bind<ISoundFingerprintingSolrConfig>().ToConstant(
-                new SoundFingerprintingSolrConfig(solrConfig.QueryBatchSize, solrConfig.PreferLocalShards));
+            var config = new ConfigurationBuilder()
+                .SetBasePath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location))
+                .AddJsonFile("appsettings.json", false, true)
+                .Build();
+
+            var solrConfig = new SoundFingerprintingSolrConfiguration();
+            config.GetSection("solr").Bind(solrConfig);
+
+            kernel.Load(new SolrNetModule(solrConfig.Servers));
+
+            kernel.Bind<SoundFingerprintingSolrConfiguration>().ToConstant(solrConfig);
 
             var tracksConnection = GetTracksConnection(kernel);
             var fingerprintsConnection = GetFingerprintsConnection(kernel);
 
             kernel.Unbind<ISolrConnection>();
 
-             kernel.Bind<ISolrConnection>()
-                  .ToConstant(new PostSolrConnection(tracksConnection, tracksConnection.ServerURL))
-                  .WithMetadata("CoreId", "tracks");
+            kernel.Bind<ISolrConnection>()
+                 .ToConstant(new PostSolrConnection(tracksConnection, tracksConnection.ServerURL))
+                 .WithMetadata("CoreId", "tracks");
 
             kernel.Bind<ISolrConnection>()
                   .ToConstant(new PostSolrConnection(fingerprintsConnection, fingerprintsConnection.ServerURL))
