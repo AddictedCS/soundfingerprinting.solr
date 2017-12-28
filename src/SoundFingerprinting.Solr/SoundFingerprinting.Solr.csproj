@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net461</TargetFrameworks>
+    <TargetFrameworks>net46;netcoreapp2.0</TargetFrameworks>
     <Title>SoundFingerprinting.Solr</Title>
     <Product>SoundFingerprinting.Solr</Product>
     <Description>Solr backend for SoundFingerprinting framework. Allows storing fingerprints in an efficient non-relational storage, with fast retrieval and scalability capabilities</Description>
@@ -12,12 +12,22 @@
     <FileVersion>4.1.0.0</FileVersion>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
     <PackageReference Include="Ninject" Version="3.3.4" />
     <PackageReference Include="SolrNet" Version="0.9.1" />
     <PackageReference Include="SolrNet.Ninject" Version="0.9.1.0" />
     <PackageReference Include="SoundFingerprinting" Version="4.1.0.0" />
     <PackageReference Include="System.ValueTuple" Version="4.4.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.0'">
+    <PackageReference Include="Ninject" Version="3.3.4" />
+    <PackageReference Include="SolrNet.Core" Version="0.9.1" />
+    <PackageReference Include="SolrNet.Ninject" Version="0.9.1.0" />
+    <PackageReference Include="SoundFingerprinting" Version="4.1.0.0" />
+    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
+    <PackageReference Include="CommonServiceLocator" Version="2.0.1" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.4.1" />
   </ItemGroup>
 
 </Project>
