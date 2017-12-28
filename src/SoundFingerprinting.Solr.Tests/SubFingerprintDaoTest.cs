@@ -21,7 +21,7 @@
         private Mock<IDictionaryToHashConverter> dictionaryToHashConverter; 
         private Mock<IHashConverter> hashConverter;
         private Mock<ISolrQueryBuilder> solrQueryBuilder;
-        private Mock<ISoundFingerprintingSolrConfig> solrConfig;
+        private SoundFingerprintingSolrConfiguration solrConfig;
 
         private SubFingerprintDao subFingerprintDao;
 
@@ -32,9 +32,9 @@
             dictionaryToHashConverter = new Mock<IDictionaryToHashConverter>(MockBehavior.Strict);
             hashConverter = new Mock<IHashConverter>(MockBehavior.Strict);
             solrQueryBuilder = new Mock<ISolrQueryBuilder>(MockBehavior.Strict);
-            solrConfig = new Mock<ISoundFingerprintingSolrConfig>(MockBehavior.Strict);
+            solrConfig = new SoundFingerprintingSolrConfiguration();
 
-            subFingerprintDao = new SubFingerprintDao(this.solr.Object, this.dictionaryToHashConverter.Object, this.solrQueryBuilder.Object, this.solrConfig.Object);
+            subFingerprintDao = new SubFingerprintDao(this.solr.Object, this.dictionaryToHashConverter.Object, this.solrQueryBuilder.Object, this.solrConfig);
         }
 
         [Test]
@@ -64,8 +64,8 @@
                     });
 
             const int BatchSize = 50;
-            solrConfig.Setup(config => config.QueryBatchSize).Returns(BatchSize);
-            solrConfig.Setup(config => config.PreferLocalShards).Returns(true);
+            solrConfig.QueryBatchSize = BatchSize;
+            solrConfig.PreferLocalShards = true;
 
             subFingerprintDao.ReadSubFingerprints(hashes, 5, new[] { "CA" });
 

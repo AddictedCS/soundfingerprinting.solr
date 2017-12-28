@@ -1,18 +1,16 @@
 ﻿namespace SoundFingerprinting.Solr.Tests.Integration
 {
     using System.Collections.Generic;
-    using System.Configuration;
+    using System.IO;
     using System.Linq;
-
+    using System.Reflection;
     using CommonServiceLocator;
-
-    using Ninject.Integration.SolrNet.Config;
-
+    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     using SolrNet;
     using SolrNet.Commands.Parameters;
-
+    using SoundFingerprinting.Solr.Config;
     using SoundFingerprinting.Solr.DAO;
 
     [TestFixture]
@@ -80,9 +78,16 @@
         [Test]
         public void ShouldReadConfigurationEntriesFromConfigFile()
         {
-            var config = (SolrConfigurationSection)ConfigurationManager.GetSection("solr");
+                
+            var config = new ConfigurationBuilder()
+                .SetBasePath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location))
+                .AddJsonFile("appsettings.json", false, true)
+                .Build();
 
-            Assert.IsNotNull(config);
+            var solrConfig = new SoundFingerprintingSolrConfiguration();
+            config.GetSection("solr").Bind(solrConfig);
+
+            Assert.IsNotNull(solrConfig);
         }
 
         [Test]
