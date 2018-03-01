@@ -4,44 +4,42 @@
     using System.Configuration;
     using System.Linq;
 
+    using CommonServiceLocator;
+
     using Ninject.Integration.SolrNet.Config;
 
     using NUnit.Framework;
 
     using SolrNet;
+    using SolrNet.Commands.Parameters;
 
-    using SoundFingerprinting.Infrastructure;
     using SoundFingerprinting.Solr.DAO;
 
     [TestFixture]
     [Category("IntegrationTest")]
     public class SolrTest
     {
-        [Test]
-        public void SolrServerIsAccessible()
-        {
-            var solr = DependencyResolver.Current.Get<ISolrOperations<SubFingerprintDTO>>();
-            solr.Ping();
-        }
+        private readonly SolrModelService modelService = new SolrModelService();
 
         [Test]
         public void SolrServerCanStoreSubFingerprints()
         {
-            var solr = DependencyResolver.Current.Get<ISolrOperations<SubFingerprintDTO>>();
+            var solr = ServiceLocator.Current.GetInstance<ISolrOperations<SubFingerprintDTO>>();
 
-            solr.Add(
-                new SubFingerprintDTO
+            solr.Add(new SubFingerprintDTO
                     {
                         SubFingerprintId = "321",
                         TrackId = "123",
-                        Hashes = new Dictionary<int, long> { { 1, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 } }
+                        Hashes = new Dictionary<int, int> { { 1, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 } }
                     });
             solr.Commit();
 
-            var docs = solr.Query("subFingerprintId:321");
+            var docs = solr.Query(
+                "subFingerprintId:321",
+                new QueryOptions { ExtraParams = new Dictionary<string, string> { { "wt", "xml" } } });
 
             Assert.AreEqual(1, docs.Count);
-            this.TearDownDocs(solr, docs);
+            TearDownDocs(solr, docs);
         }
 
         [Test]
@@ -51,24 +49,26 @@
                 {
                     SubFingerprintId = "1",
                     TrackId = "1",
-                    Hashes = new Dictionary<int, long> { { 0, 10 }, { 1, 11 }, { 2, 12 }, { 3, 13 }, { 4, 14 } }
+                    Hashes = new Dictionary<int, int> { { 0, 10 }, { 1, 11 }, { 2, 12 }, { 3, 13 }, { 4, 14 } }
                 };
 
             var doc2 = new SubFingerprintDTO
                 {
                     SubFingerprintId = "2",
                     TrackId = "2",
-                    Hashes = new Dictionary<int, long> { { 0, 10 }, { 1, 11 }, { 2, 20 }, { 3, 21 }, { 4, 22 } }
+                    Hashes = new Dictionary<int, int> { { 0, 10 }, { 1, 11 }, { 2, 20 }, { 3, 21 }, { 4, 22 } }
                 };
 
-            var solr = DependencyResolver.Current.Get<ISolrOperations<SubFingerprintDTO>>();
+            var solr = ServiceLocator.Current.GetInstance<ISolrOperations<SubFingerprintDTO>>();
 
             solr.Add(doc1);
             solr.Add(doc2);
             solr.Commit();
 
             var query = new SolrQuery("_query_:\"{!edismax mm=4}hashTable_0:10 hashTable_1:11 hashTable_2:12 hashTable_3:21 hashTable_4:22\" _query_:\"{!edismax mm=4}hashTable_0:10 hashTable_1:11 hashTable_2:20 hashTable_3:21 hashTable_4:22\"");
-            var docs = solr.Query(query);
+            var docs = solr.Query(
+                query,
+                new QueryOptions { ExtraParams = new Dictionary<string, string> { { "wt", "xml" } } });
            
             Assert.AreEqual(1, docs.Count);
             var result = docs.First();
@@ -88,8 +88,8 @@
         [Test]
         public void ShouldLoadConfigEntriesInNinjectKernel()
         {
-            var solrForTracks = DependencyResolver.Current.Get<ISolrOperations<TrackDTO>>();
-            var solrForSubFingerprints = DependencyResolver.Current.Get<ISolrOperations<SubFingerprintDTO>>();
+            var solrForTracks = ServiceLocator.Current.GetInstance<ISolrOperations<TrackDTO>>();
+            var solrForSubFingerprints = ServiceLocator.Current.GetInstance<ISolrOperations<SubFingerprintDTO>>();
 
             Assert.IsNotNull(solrForTracks);
             Assert.IsNotNull(solrForSubFingerprints);

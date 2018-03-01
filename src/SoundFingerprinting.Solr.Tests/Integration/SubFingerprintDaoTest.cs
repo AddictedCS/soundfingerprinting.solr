@@ -18,6 +18,7 @@
     {
         private readonly FingerprintCommandBuilder fingerprintCommandBuilder = new FingerprintCommandBuilder();
         private readonly IAudioService audioService = new NAudioService();
+        private readonly SolrModelService modelService = new SolrModelService();
         private readonly SubFingerprintDao subFingerprintDao = new SubFingerprintDao();
         private readonly TrackDao trackDao = new TrackDao();
 
@@ -37,13 +38,12 @@
             var track = new TrackData("isrc", "artist", "title", "album", 1986, 200);
             var trackReference = trackDao.InsertTrack(track);
             const int NumberOfHashBins = 100;
-            var genericHashBuckets = new long[25];
+            var genericHashBuckets = new int[25];
             var hashedFingerprints =
                 Enumerable.Range(0, NumberOfHashBins)
                     .Select(
                         sequenceNumber =>
                             new HashedFingerprint(
-                                GenericSignature(),
                                 genericHashBuckets,
                                 (uint)sequenceNumber,
                                 sequenceNumber * 0.928f,
@@ -86,12 +86,12 @@
 
             var hashedFingerprintsForFirstTrack = HashFingerprintsForTrack(
                 firstTrackReference,
-                new[] { "first-group-id" });
+                "first-group-id");
 
 
             var hashedFingerprintsForSecondTrack = HashFingerprintsForTrack(
                 secondTrackReference,
-                new[] { "second-group-id" });
+                "second-group-id");
 
             const int ThresholdVotes = 25;
             foreach (var hashedFingerprint in hashedFingerprintsForFirstTrack)

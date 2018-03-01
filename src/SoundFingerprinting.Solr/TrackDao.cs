@@ -4,11 +4,13 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    using CommonServiceLocator;
+
     using SolrNet;
+    using SolrNet.Commands.Parameters;
 
     using SoundFingerprinting.DAO;
     using SoundFingerprinting.DAO.Data;
-    using SoundFingerprinting.Infrastructure;
     using SoundFingerprinting.Solr.DAO;
 
     internal class TrackDao : ITrackDao
@@ -19,9 +21,9 @@
 
         public TrackDao()
             : this(
-                DependencyResolver.Current.Get<ISolrOperations<TrackDTO>>(),
-                DependencyResolver.Current.Get<ISolrOperations<SubFingerprintDTO>>(),
-                DependencyResolver.Current.Get<ISolrQueryBuilder>())
+                ServiceLocator.Current.GetInstance<ISolrOperations<TrackDTO>>(),
+                ServiceLocator.Current.GetInstance<ISolrOperations<SubFingerprintDTO>>(),
+                new SolrQueryBuilder())
         {
         }
 
@@ -37,7 +39,7 @@
 
         public IModelReference InsertTrack(TrackData track)
         {
-            Guid id = Guid.NewGuid();
+            var id = Guid.NewGuid();
             var dto = new TrackDTO
                 {
                     Id = id.ToString(),
@@ -49,8 +51,8 @@
                     TrackLengthSec = track.Length
                 };
 
-            this.solrForTracksCore.Add(dto);
-            this.solrForTracksCore.Commit();
+            solrForTracksCore.Add(dto);
+            solrForTracksCore.Commit();
             var trackReference = new SolrModelReference(id.ToString());
             track.TrackReference = trackReference;
             return trackReference;
@@ -59,46 +61,60 @@
         public TrackData ReadTrack(IModelReference trackReference)
         {
             var trackId = SolrModelReference.GetId(trackReference);
-            var query = new SolrQuery(string.Format("trackId:{0}", trackId));
+            var query = new SolrQuery($"trackId:{trackId}");
 
-            var results = this.solrForTracksCore.Query(query);
+            var results = solrForTracksCore.Query(
+                query,
+                new QueryOptions { ExtraParams = new Dictionary<string, string> { { "wt", "xml" } } });
             return FirstFromResultSet(results);
+        }
+
+        public List<TrackData> ReadTracks(IEnumerable<IModelReference> ids)
+        {
+            string sids = string.Join(",", ids.Select(id => $"\"{SolrModelReference.GetId(id)}\""));
+            var query = new SolrQuery($"trackId:({sids})");
+            var results = solrForTracksCore.Query(query, new QueryOptions { ExtraParams = new Dictionary<string, string> { { "wt", "xml" } } });
+            return AllFromResultSet(results).ToList();
         }
 
         public int DeleteTrack(IModelReference trackReference)
         {
-            int subIds = this.DeleteSubFingerprintsForTrack(trackReference);
-            this.solrForTracksCore.Delete(SolrModelReference.GetId(trackReference));
-            this.solrForTracksCore.Commit();
+            int subIds = DeleteSubFingerprintsForTrack(trackReference);
+            solrForTracksCore.Delete(SolrModelReference.GetId(trackReference));
+            solrForTracksCore.Commit();
             return 1 + subIds;
         }
 
         public IList<TrackData> ReadTrackByArtistAndTitleName(string artist, string title)
         {
             var query = solrQueryBuilder.BuildReadQueryForTitleAndArtist(title, artist);
-            var results = this.solrForTracksCore.Query(query);
+            var results = solrForTracksCore.Query(
+                query,
+                new QueryOptions { ExtraParams = new Dictionary<string, string> { { "wt", "xml" } } });
             return AllFromResultSet(results);
         }
         
         public TrackData ReadTrackByISRC(string isrc)
         {
-            var query = new SolrQuery(string.Format("isrc:{0}", isrc));
-            var results = this.solrForTracksCore.Query(query);
+            var query = new SolrQuery($"isrc:{isrc}");
+            var results = solrForTracksCore.Query(query, new QueryOptions { ExtraParams = new Dictionary<string, string> { { "wt", "xml" } } });
             return FirstFromResultSet(results);
         }
 
         public IList<TrackData> ReadAll()
         {
             var query = new SolrQuery("*:*");
-            var results = this.solrForTracksCore.Query(query);
+            var results = solrForTracksCore.Query(query, new QueryOptions { ExtraParams = new Dictionary<string, string> { { "wt", "xml" } } });
             return AllFromResultSet(results);
         }
 
         private int DeleteSubFingerprintsForTrack(IModelReference trackReference)
         {
             string trackId = SolrModelReference.GetId(trackReference);
-            string readAll = string.Format("trackId:{0}", trackId);
-            var results = solrForSubfingerprintsCore.Query(new SolrQuery(readAll));
+            string readAll = $"trackId:{trackId}";
+            var results = solrForSubfingerprintsCore.Query(
+                new SolrQuery(readAll),
+                new QueryOptions { ExtraParams = new Dictionary<string, string> { { "wt", "xml" } } });
             var ids = results.Select(dto => dto.SubFingerprintId).ToList();
             solrForSubfingerprintsCore.Delete(ids);
             solrForSubfingerprintsCore.Commit();

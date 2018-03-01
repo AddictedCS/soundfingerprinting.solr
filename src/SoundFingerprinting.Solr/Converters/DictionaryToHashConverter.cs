@@ -5,16 +5,16 @@
 
     internal class DictionaryToHashConverter : IDictionaryToHashConverter
     {
-        public Dictionary<int, long> FromHashesToSolrDictionary(long[] hashBins)
+        public Dictionary<int, int> FromHashesToSolrDictionary(int[] hashBins)
         {
             var hashTables = hashBins.Select((hash, index) => new { index, hash })
                                      .ToDictionary(x => x.index, x => x.hash);
             return hashTables;
         }
 
-        public long[] FromSolrDictionaryToHashes(IDictionary<int, long> hashTables)
+        public int[] FromSolrDictionaryToHashes(IDictionary<int, int> hashTables)
         {
-            long[] hashBins = new long[hashTables.Count];
+            int[] hashBins = new int[hashTables.Count];
             foreach (var hashTable in hashTables)
             {
                 hashBins[hashTable.Key] = hashTable.Value;

@@ -19,7 +19,7 @@
         public double SequenceAt { get; set; }
 
         [SolrField("hashTable_")]
-        public IDictionary<int, long> Hashes { get; set; }
+        public IDictionary<int, int> Hashes { get; set; }
 
         [SolrField("clusters")]
         public IEnumerable<string> Clusters { get; set; }

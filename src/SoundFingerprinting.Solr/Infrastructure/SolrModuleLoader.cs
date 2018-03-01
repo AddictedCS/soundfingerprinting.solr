@@ -2,25 +2,25 @@
 {
     using System.Configuration;
 
+    using CommonServiceLocator;
+
     using Ninject;
     using Ninject.Integration.SolrNet;
 
     using SolrNet;
     using SolrNet.Impl;
 
-    using SoundFingerprinting.Infrastructure;
     using SoundFingerprinting.Solr.Config;
-    using SoundFingerprinting.Solr.Converters;
 
-    public class SolrModuleLoader : IModuleLoader
+    internal class SolrModuleLoader
     {
-        public void LoadAssemblyBindings(IKernel kernel)
+        public void LoadAssemblyBindings()
         {
+            var kernel = new StandardKernel();
             var solrConfig = (SoundFingerprintingSolrConfigurationSection)ConfigurationManager.GetSection("solr");
             
             kernel.Load(new SolrNetModule(solrConfig.SolrServers));
-            kernel.Bind<IDictionaryToHashConverter>().To<DictionaryToHashConverter>().InSingletonScope();
-            kernel.Bind<ISolrQueryBuilder>().To<SolrQueryBuilder>().InSingletonScope();
+
             kernel.Bind<ISoundFingerprintingSolrConfig>().ToConstant(
                 new SoundFingerprintingSolrConfig(solrConfig.QueryBatchSize, solrConfig.PreferLocalShards));
 
@@ -29,13 +29,15 @@
 
             kernel.Unbind<ISolrConnection>();
 
-            kernel.Bind<ISolrConnection>()
-                  .ToConstant<PostSolrConnection>(new PostSolrConnection(tracksConnection, tracksConnection.ServerURL))
-                  .WithMetadata("CoreId", (object)"tracks");
+             kernel.Bind<ISolrConnection>()
+                  .ToConstant(new PostSolrConnection(tracksConnection, tracksConnection.ServerURL))
+                  .WithMetadata("CoreId", "tracks");
 
             kernel.Bind<ISolrConnection>()
-                  .ToConstant<PostSolrConnection>(new PostSolrConnection(fingerprintsConnection, fingerprintsConnection.ServerURL))
-                  .WithMetadata("CoreId", (object)"fingerprints");
+                  .ToConstant(new PostSolrConnection(fingerprintsConnection, fingerprintsConnection.ServerURL))
+                  .WithMetadata("CoreId", "fingerprints");
+
+            ServiceLocator.SetLocatorProvider(() => new NinjectServiceLocator(kernel));
         }
 
         private static SolrConnection GetFingerprintsConnection(IKernel kernel)
