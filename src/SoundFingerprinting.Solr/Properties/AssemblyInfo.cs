@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Sergiu Ciumac")]
 [assembly: AssemblyProduct("SoundFingerprinting.Solr")]
-[assembly: AssemblyCopyright("Copyright © Sergiu Ciumac 2017")]
+[assembly: AssemblyCopyright("Copyright © Sergiu Ciumac 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
