@@ -4,7 +4,6 @@
     using System.Linq;
 
     using Audio;
-    using Audio.NAudio;
 
     using Builder;
     using Data;
@@ -17,7 +16,7 @@
     public class SubFingerprintDaoTest : IntegrationTestWithSampleFiles
     {
         private readonly FingerprintCommandBuilder fingerprintCommandBuilder = new FingerprintCommandBuilder();
-        private readonly IAudioService audioService = new NAudioService();
+        private readonly IAudioService audioService = new SoundFingerprintingAudioService();
         private readonly SolrModelService modelService = new SolrModelService();
         private readonly SubFingerprintDao subFingerprintDao = new SubFingerprintDao();
         private readonly TrackDao trackDao = new TrackDao();

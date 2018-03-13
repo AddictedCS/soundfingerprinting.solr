@@ -4,7 +4,7 @@
 
     using NUnit.Framework;
 
-    using SoundFingerprinting.Audio.NAudio;
+    using SoundFingerprinting.Audio;
     using SoundFingerprinting.Builder;
     using SoundFingerprinting.Configuration;
     using SoundFingerprinting.DAO.Data;
@@ -25,7 +25,7 @@
 
         private readonly SolrModelService modelService = new SolrModelService();
         private readonly FingerprintCommandBuilder fcb = new FingerprintCommandBuilder();
-        private readonly NAudioService audioService = new NAudioService();
+        private readonly IAudioService audioService = new SoundFingerprintingAudioService();
         private readonly TrackDao trackDao = new TrackDao();
 
         [TearDown]
