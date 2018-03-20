@@ -68,7 +68,7 @@
 
             var subFingerprints = modelService.ReadSubFingerprints(queryBuckets, new DefaultQueryConfiguration());
 
-            Assert.AreEqual(1, subFingerprints.Count);
+            Assert.AreEqual(2, subFingerprints.Count);
             Assert.AreEqual(firstTrackReference, subFingerprints[0].TrackReference);
         }
 
