@@ -7,6 +7,7 @@
 
     using NUnit.Framework;
 
+    using SoundFingerprinting.Data;
     using SoundFingerprinting.DAO;
     using SoundFingerprinting.DAO.Data;
 
@@ -27,21 +28,21 @@
         [Test]
         public void ShouldInsertTrack()
         {
-            var track = new TrackData("isrc", "artist", "title", "album", 1986, 3.6);
-            var reference = trackDao.InsertTrack(track);
+            var track = new TrackInfo("id", "artist", "title", 3.6);
+            var trackData = trackDao.InsertTrack(track);
 
-            Assert.IsNotNull(reference);
+            Assert.IsNotNull(trackData.TrackReference);
         }
 
         [Test]
         public void ShouldReadTrack()
         {
-            var expected = new TrackData("isrc", "artist", "title", "album", 1994, 4.0);
-            var reference = trackDao.InsertTrack(expected);
+            var expected = new TrackInfo("isrc", "artist", "title", 4.0);
+            var trackData = trackDao.InsertTrack(expected);
 
-            var actual = trackDao.ReadTrack(reference);
+            var actual = trackDao.ReadTrack(trackData.TrackReference);
 
-            AssertTracksAreEqual(expected, actual);
+            AssertTracksAreEqual(trackData, actual);
         }
 
         [Test]
@@ -51,13 +52,13 @@
             var l = 10;
             for (int i = 0; i < l; ++i)
             {
-                var track = new TrackData($"isrc_{i}", "artist", "title", "album", 1986, 100);
-                var reference = trackDao.InsertTrack(track);
-                refs.Add(reference);
+                var track = new TrackInfo($"id_{i}", "artist", "title", 100);
+                var trackData = trackDao.InsertTrack(track);
+                refs.Add(trackData.TrackReference);
             }
 
-            var actual = trackDao.ReadTracks(refs);
-            Assert.AreEqual(10, actual.Count);
+            var actual = trackDao.ReadTrackByReferences(refs);
+            Assert.AreEqual(10, actual.Count());
         }
 
         [Test]
@@ -71,15 +72,16 @@
         [Test]
         public void ShouldDeleteTrack()
         {
-            var expected = new TrackData("isrc", "artist", "title", "album", 1994, 4.0);
-            var reference = trackDao.InsertTrack(expected);
-            var actual = trackDao.ReadTrack(reference);
-            AssertTracksAreEqual(expected, actual);
+            var expected = new TrackInfo("id", "artist", "title", 4.0);
+            var trackData = trackDao.InsertTrack(expected);
+            var actual = trackDao.ReadTrack(trackData.TrackReference);
 
-            trackDao.DeleteTrack(reference);
+            AssertTracksAreEqual(trackData, actual);
+
+            trackDao.DeleteTrack(trackData.TrackReference);
 
             var tracks = trackDao.ReadAll();
-            Assert.AreEqual(0, tracks.Count);
+            Assert.AreEqual(0, tracks.Count());
         }
 
         [Test]
@@ -89,15 +91,12 @@
             var modelReferences = new ConcurrentBag<IModelReference>();
             for (int i = 0; i < NumberOfTracks; i++)
             {
-                var modelReference =
-                    trackDao.InsertTrack(
-                        new TrackData("isrc", "artist", "title", "album", 2012, 200));
-
-                Assert.IsFalse(modelReferences.Contains(modelReference));
-                modelReferences.Add(modelReference);
+                var trackData = trackDao.InsertTrack(new TrackInfo("id", "artist", "title", 200));
+                Assert.IsFalse(modelReferences.Contains(trackData.TrackReference));
+                modelReferences.Add(trackData.TrackReference);
             }
 
-            Assert.AreEqual(NumberOfTracks, trackDao.ReadAll().Count);
+            Assert.AreEqual(NumberOfTracks, trackDao.ReadAll().Count());
         }
 
         [Test]
@@ -106,7 +105,7 @@
             const int TrackCount = 5;
             var expectedTracks = InsertRandomTracks(TrackCount);
 
-            var tracks = trackDao.ReadAll();
+            var tracks = trackDao.ReadAll().ToList();
 
             Assert.AreEqual(TrackCount, tracks.Count);
             foreach (var expectedTrack in expectedTracks)
@@ -121,7 +120,7 @@
             const int TrackCount = 100;
             var tracks = InsertRandomTracks(TrackCount);
 
-            var actualTracks = trackDao.ReadAll();
+            var actualTracks = trackDao.ReadAll().ToList();
 
             Assert.AreEqual(tracks.Count, actualTracks.Count);
             for (int i = 0; i < actualTracks.Count; i++)
@@ -134,24 +133,22 @@
         [Test]
         public void ReadTrackByArtistAndTitleTest()
         {
-            var track = GetRandomTrack();
-            track.Artist = "This is a long artist name";
-            track.Title = "This is a long title name";
+            var track = new TrackInfo("id1", "some title", "artist", 120d);
             trackDao.InsertTrack(track);
 
-            var tracks = trackDao.ReadTrackByArtistAndTitleName(track.Artist, track.Title);
+            var tracks = trackDao.ReadTrackByTitle(track.Title).ToList();
 
             Assert.IsNotNull(tracks);
             Assert.IsTrue(tracks.Count == 1);
-            AssertTracksAreEqual(track, tracks[0]);
+            Assert.AreEqual(track.Id, tracks[0].ISRC);
         }
 
         [Test]
         public void ReadByNonExistentArtistAndTitleTest()
         {
-            var tracks = trackDao.ReadTrackByArtistAndTitleName("artist", "title");
+            var tracks = trackDao.ReadTrackByTitle("title");
 
-            Assert.IsTrue(tracks.Count == 0);
+            Assert.IsFalse(tracks.Any());
         }
 
         [Test]
@@ -160,9 +157,9 @@
             var expectedTrack = GetRandomTrack();
             trackDao.InsertTrack(expectedTrack);
 
-            var actualTrack = trackDao.ReadTrackByISRC(expectedTrack.ISRC);
+            var actualTrack = trackDao.ReadTrackById(expectedTrack.Id);
 
-            AssertTracksAreEqual(expectedTrack, actualTrack);
+            Assert.AreEqual(expectedTrack.Id, actualTrack.ISRC);
         }
 
         [Test]
@@ -171,7 +168,7 @@
             const int NumberOfTracks = 10;
             InsertRandomTracks(NumberOfTracks);
 
-            var allTracks = trackDao.ReadAll();
+            var allTracks = trackDao.ReadAll().ToList();
 
             Assert.IsTrue(allTracks.Count == NumberOfTracks);
             foreach (var track in allTracks)
@@ -179,23 +176,22 @@
                 trackDao.DeleteTrack(track.TrackReference);
             }
 
-            Assert.IsTrue(trackDao.ReadAll().Count == 0);
+            Assert.IsFalse(trackDao.ReadAll().Any());
         }
 
         [Test]
-        public void InserTrackShouldAcceptEmptyEntriesCodes()
+        public void InsertTrackShouldAcceptEmptyEntriesCodes()
         {
-            TrackData track = new TrackData(string.Empty, string.Empty, string.Empty, string.Empty, 1986, 200);
+            var track = new TrackInfo(string.Empty, string.Empty, string.Empty, 200);
             var trackReference = trackDao.InsertTrack(track);
 
-            var actualTrack = trackDao.ReadTrack(trackReference);
+            var actualTrack = trackDao.ReadTrack(trackReference.TrackReference);
 
-            AssertTracksAreEqual(track, actualTrack);
+            Assert.AreEqual(track.Id, actualTrack.ISRC);
         }
 
         private void AssertTracksAreEqual(TrackData expectedTrack, TrackData actualTrack)
         {
-            Assert.AreEqual(expectedTrack.Album, actualTrack.Album);
             Assert.AreEqual(expectedTrack.Artist, actualTrack.Artist);
             Assert.AreEqual(expectedTrack.Title, actualTrack.Title);
             Assert.AreEqual(expectedTrack.Length, actualTrack.Length);
@@ -207,18 +203,17 @@
             var tracks = new List<TrackData>();
             for (int i = 0; i < trackCount; i++)
             {
-                var track = this.GetRandomTrack();
-                tracks.Add(track);
-                var reference = trackDao.InsertTrack(track);
-                track.TrackReference = reference;
+                var track = GetRandomTrack();
+                var trackData = trackDao.InsertTrack(track);
+                tracks.Add(trackData);
             }
 
             return tracks;
         }
 
-        private TrackData GetRandomTrack()
+        private TrackInfo GetRandomTrack()
         {
-            return new TrackData(Guid.NewGuid().ToString(), "artist", "title", "album", 1986, 360);
+            return new TrackInfo(Guid.NewGuid().ToString(), "artist", "title", 360);
         }
 
         private void TearDownTracks(IEnumerable<IModelReference> modelReferences)

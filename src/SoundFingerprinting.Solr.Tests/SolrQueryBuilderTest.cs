@@ -22,9 +22,9 @@
         [Test]
         public void ShouldBuildArtistAndTitleQuery()
         {
-            string query = queryBuilder.BuildReadQueryForTitleAndArtist("Piano Sonata No. 2 in \"B-flat minor\", Op. 35: III. Marche funèbre: Lento", "Chopin");
+            string query = queryBuilder.BuildReadQueryForTitle("Piano Sonata No. 2 in \"B-flat minor\", Op. 35: III. Marche funèbre: Lento");
 
-            Assert.AreEqual("title:\"Piano Sonata No. 2 in \\\"B-flat minor\\\", Op. 35: III. Marche funèbre: Lento\" AND artist:\"Chopin\"", query);
+            Assert.AreEqual("title:\"Piano Sonata No. 2 in \\\"B-flat minor\\\", Op. 35: III. Marche funèbre: Lento\"", query);
         }
 
         [Test]

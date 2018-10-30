@@ -1,13 +1,13 @@
 ﻿namespace SoundFingerprinting.Solr.Tests.Integration
 {
     using System.Linq;
+    using System.Threading.Tasks;
 
     using NUnit.Framework;
 
     using SoundFingerprinting.Audio;
     using SoundFingerprinting.Builder;
     using SoundFingerprinting.Configuration;
-    using SoundFingerprinting.DAO.Data;
     using SoundFingerprinting.Data;
     using SoundFingerprinting.Strides;
 
@@ -20,7 +20,7 @@
         private readonly int[] secondTrackBuckets = { 2, 2, 4, 5, 6, 7, 7, 9, 10, 11, 12, 13, 14, 14, 16, 17, 18, 19, 20, 20, 22, 23, 24, 25, 26 };
 
         // query buckets are similar with 5 elements from first track and 4 elements from second track
-        private readonly int[] queryBuckets = { 3, 2, 5, 6, 7, 8, 7, 10, 11, 12, 13, 14, 15, 14, 17, 18, 19, 20, 21, 20, 23, 24, 25, 26, 25 };
+        private readonly QueryHash queryBuckets = new QueryHash(new[] { 3, 2, 5, 6, 7, 8, 7, 10, 11, 12, 13, 14, 15, 14, 17, 18, 19, 20, 21, 20, 23, 24, 25, 26, 25 }, 0);
 
 
         private readonly SolrModelService modelService = new SolrModelService();
@@ -39,98 +39,87 @@
         }
 
         [Test]
-        public void ShouldInsertAllSubfingerprintsForTrack()
+        public async Task ShouldInsertAllSubFingerprintsForTrack()
         {
-            var hashedFingerprints = fcb.BuildFingerprintCommand()
+            var hashedFingerprints = await fcb.BuildFingerprintCommand()
                                          .From(GetAudioSamples())
                                          .UsingServices(audioService)
-                                         .Hash()
-                                         .Result;
+                                         .Hash();
 
-            var track = new TrackData("isrc", "artist", "title", "album", 1986, 4d);
-            var trackReference = modelService.InsertTrack(track);
-
-            modelService.InsertHashDataForTrack(hashedFingerprints, trackReference);
+            var track = new TrackInfo("id", "artist", "title", 4d);
+            modelService.Insert(track, hashedFingerprints);
         }
 
         [Test]
         public void ShouldReadSubFingerprintsByHashBucketsHavingThreshold()
         {
-            var firstTrack = new TrackData("isrc1", "artist", "title", "album", 1986, 200);
-            var firstTrackReference = modelService.InsertTrack(firstTrack);
-            var secondTrack = new TrackData("isrc2", "artist", "title", "album", 1986, 200);
-            var secondTrackReference = modelService.InsertTrack(secondTrack);
+            var firstTrack = new TrackInfo("id1", "artist", "title", 200);
+            var secondTrack = new TrackInfo("id2", "artist", "title", 200);
             var firstHashData = new HashedFingerprint(firstTrackBuckets, 1, 0.928f, Enumerable.Empty<string>());
             var secondHashData = new HashedFingerprint(secondTrackBuckets, 1, 0.928f, Enumerable.Empty<string>());
 
-            modelService.InsertHashDataForTrack(new[] { firstHashData }, firstTrackReference);
-            modelService.InsertHashDataForTrack(new[] { secondHashData }, secondTrackReference);
+            var firstTrackReference = modelService.Insert(firstTrack, new[] { firstHashData });
+            var secondTrackReference = modelService.Insert(secondTrack, new[] { secondHashData });
 
-            var subFingerprints = modelService.ReadSubFingerprints(queryBuckets, new DefaultQueryConfiguration());
+            var subFingerprints = modelService.ReadSubFingerprints(new[] { queryBuckets }, new DefaultQueryConfiguration()).Matches.ToList();
 
             Assert.AreEqual(2, subFingerprints.Count);
-            Assert.AreEqual(firstTrackReference, subFingerprints[0].TrackReference);
+            Assert.AreEqual(firstTrackReference, subFingerprints[0].SubFingerprint.TrackReference);
         }
 
         [Test]
         public void ShouldReadSubFingerprintsByHashBucketsHavingThresholdAndCluster()
         {
-            var firstTrack = new TrackData("isrc1", "artist", "title", "album", 1986, 200);
-            var firstTrackReference = modelService.InsertTrack(firstTrack);
-            var secondTrack = new TrackData("isrc2", "artist", "title", "album", 1986, 200);
-            var secondTrackReference = modelService.InsertTrack(secondTrack);
+            var firstTrack = new TrackInfo("id1", "artist", "title", 200);
+            var secondTrack = new TrackInfo("id2", "artist", "title", 200);
             var firstHashData = new HashedFingerprint(firstTrackBuckets, 1, 0.928f, new[] { "first-group-id" });
             var secondHashData = new HashedFingerprint(secondTrackBuckets, 1, 0.928f, new[] { "second-group-id" });
 
-            modelService.InsertHashDataForTrack(new[] { firstHashData }, firstTrackReference);
-            modelService.InsertHashDataForTrack(new[] { secondHashData }, secondTrackReference);
+            var firstTrackReference = modelService.Insert(firstTrack, new[] { firstHashData });
+            var secondTrackReference = modelService.Insert(secondTrack, new[] { secondHashData });
 
-            var subFingerprints = modelService.ReadSubFingerprints(queryBuckets, new DefaultQueryConfiguration { Clusters = new[] { "first-group-id" } });
+            var subFingerprints = modelService.ReadSubFingerprints(new[] { queryBuckets }, new DefaultQueryConfiguration { Clusters = new[] { "first-group-id" } }).Matches.ToList();
 
             Assert.AreEqual(1, subFingerprints.Count);
-            Assert.AreEqual(firstTrackReference, subFingerprints[0].TrackReference);
+            Assert.AreEqual(firstTrackReference, subFingerprints[0].SubFingerprint.TrackReference);
         }
 
         [Test]
         public void ShouldReadSubFingerprintsByHashBucketsHavingThresholdAndMultipleClusters()
         {
-            var firstTrack = new TrackData("isrc1", "artist", "title", "album", 1986, 200);
-            var firstTrackReference = modelService.InsertTrack(firstTrack);
-            var secondTrack = new TrackData("isrc2", "artist", "title", "album", 1986, 200);
-            var secondTrackReference = modelService.InsertTrack(secondTrack);
+            var firstTrack = new TrackInfo("id1", "artist", "title", 200);
+            var secondTrack = new TrackInfo("isrc2", "artist", "title", 200);
             var firstHashData = new HashedFingerprint(firstTrackBuckets, 1, 0.928f, new[] { "first-group-id", "all", "hui" });
             var secondHashData = new HashedFingerprint(firstTrackBuckets, 1, 0.928f, new[] { "second-group-id", "all" });
 
-            modelService.InsertHashDataForTrack(new[] { firstHashData }, firstTrackReference);
-            modelService.InsertHashDataForTrack(new[] { secondHashData }, secondTrackReference);
+            var firstTrackReference = modelService.Insert(firstTrack, new[] { firstHashData });
+            var secondTrackReference = modelService.Insert(secondTrack, new[] { secondHashData });
 
-            var subFingerprints = modelService.ReadSubFingerprints(queryBuckets, new DefaultQueryConfiguration { Clusters = new[] { "not-all", "all" } });
+            var subFingerprints = modelService.ReadSubFingerprints(new[] { queryBuckets }, new DefaultQueryConfiguration { Clusters = new[] { "not-all", "all" } }).Matches.ToList();
 
             Assert.AreEqual(2, subFingerprints.Count);
-            Assert.AreEqual(firstTrackReference, subFingerprints[0].TrackReference);
-            Assert.AreEqual(secondTrackReference, subFingerprints[1].TrackReference);
+            Assert.AreEqual(firstTrackReference, subFingerprints[0].SubFingerprint.TrackReference);
+            Assert.AreEqual(secondTrackReference, subFingerprints[1].SubFingerprint.TrackReference);
         }
 
         [Test]
-        public void ShouldDeleteSubfingerprintsOnTrackDelete()
+        public async Task ShouldDeleteSubFingerprintsOnTrackDelete()
         {
-            var track = new TrackData("isrc", "artist", "title", "album", 1986, 3.3d);
-            var trackReference = trackDao.InsertTrack(track);
+            var track = new TrackInfo("id", "artist", "title", 3.3d);
             var audioSamples = GetAudioSamples();
-            var hashData = fcb.BuildFingerprintCommand()
+            var hashData = await fcb.BuildFingerprintCommand()
                    .From(audioSamples)
                    .WithFingerprintConfig(config =>
                        {
                            config.Stride = new StaticStride(0);
                            return config;
                        })
-                   .UsingServices(this.audioService)
-                   .Hash()
-                   .Result;
+                   .UsingServices(audioService)
+                   .Hash();
 
-            modelService.InsertHashDataForTrack(hashData, trackReference);
+            var trackReference = modelService.Insert(track, hashData);
 
-            int modifiedRows = trackDao.DeleteTrack(trackReference);
+            int modifiedRows = modelService.DeleteTrack(trackReference);
 
             Assert.AreEqual((int)(audioSamples.Duration / 1.48), modifiedRows);
         }

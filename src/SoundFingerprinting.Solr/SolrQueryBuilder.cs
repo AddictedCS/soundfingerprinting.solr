@@ -24,10 +24,9 @@
             return string.Join(" ", allSubQueries);
         }
 
-        public string BuildReadQueryForTitleAndArtist(string title, string artist)
+        public string BuildReadQueryForTitle(string title)
         {
-            string query = $"title:\"{EscapeSolrQueryInput(title)}\" AND artist:\"{EscapeSolrQueryInput(artist)}\"";
-            return query;
+            return $"title:\"{EscapeSolrQueryInput(title)}\"";
         }
 
         public string BuildQueryForClusters(IEnumerable<string> clusters)

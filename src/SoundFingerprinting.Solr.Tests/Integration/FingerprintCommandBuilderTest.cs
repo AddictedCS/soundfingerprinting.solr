@@ -1,12 +1,13 @@
 ﻿namespace SoundFingerprinting.Solr.Tests.Integration
 {
     using System.Linq;
+    using System.Threading.Tasks;
 
     using NUnit.Framework;
 
     using SoundFingerprinting.Audio;
     using SoundFingerprinting.Builder;
-    using SoundFingerprinting.DAO.Data;
+    using SoundFingerprinting.Data;
 
     [TestFixture]
     [Category("IntegrationTest")]
@@ -28,28 +29,25 @@
         }
 
         [Test]
-        public void ShouldCreateFingerprintsInsertThenQueryAndGetTheRightResult()
+        public async Task ShouldCreateFingerprintsInsertThenQueryAndGetTheRightResult()
         {
             const int SecondsToProcess = 10;
             const int StartAtSecond = 30;
             var audioSamples = GetAudioSamples();
-            var track = new TrackData(string.Empty, audioSamples.Origin, audioSamples.Origin, string.Empty, 1986, audioSamples.Duration);
-            var trackReference = modelService.InsertTrack(track);
-            var hashDatas = fingerprintCommandBuilder.BuildFingerprintCommand()
+            var track = new TrackInfo("id", audioSamples.Origin, audioSamples.Origin, audioSamples.Duration);
+            var fingerprints = await fingerprintCommandBuilder.BuildFingerprintCommand()
                     .From(audioSamples)
                     .UsingServices(audioService)
-                    .Hash()
-                    .Result;
+                    .Hash();
 
-            modelService.InsertHashDataForTrack(hashDatas, trackReference);
+            var trackReference = modelService.Insert(track, fingerprints);
 
             var querySamples = GetQuerySamples(audioSamples, StartAtSecond, SecondsToProcess);
 
-            var queryResult = queryCommandBuilder.BuildQueryCommand()
+            var queryResult = await queryCommandBuilder.BuildQueryCommand()
                     .From(new AudioSamples(querySamples, string.Empty, audioSamples.SampleRate))
                     .UsingServices(modelService, audioService)
-                    .Query()
-                    .Result;
+                    .Query();
 
             Assert.IsTrue(queryResult.ContainsMatches);
             Assert.AreEqual(1, queryResult.ResultEntries.Count());

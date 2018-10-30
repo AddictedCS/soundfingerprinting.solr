@@ -23,5 +23,20 @@
 
         [SolrField("clusters")]
         public IEnumerable<string> Clusters { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is SubFingerprintDTO))
+            {
+                return false;
+            }
+
+            return ((SubFingerprintDTO)obj).SubFingerprintId.Equals(SubFingerprintId);
+        }
+
+        public override int GetHashCode()
+        {
+            return SubFingerprintId.GetHashCode();
+        }
     }
 }

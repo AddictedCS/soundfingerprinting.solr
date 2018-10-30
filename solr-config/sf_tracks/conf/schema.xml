@@ -8,10 +8,10 @@
     <similarity class="solr.SchemaSimilarityFactory"/>  <!-- Configure global similarity. Similarity is configured per type -->
    
     <field name="trackId" type="string" indexed="true" stored="true" required="true" multiValued="false" omitTermFreqAndPositions="true" omitNorms="true" />
-    <field name="artist" type="string" indexed="true" stored="true" required="true" multiValued="false" omitTermFreqAndPositions="true" omitNorms="true" />
+    <field name="artist" type="string" indexed="true" stored="true" required="false" multiValued="false" omitTermFreqAndPositions="true" omitNorms="true" />
     <field name="title" type="string" indexed="true" stored="true" required="true" multiValued="false" omitTermFreqAndPositions="true" omitNorms="true" />
     <field name="isrc" type="string" indexed="true" stored="true" required="true" multiValued="false" omitTermFreqAndPositions="true" omitNorms="true" />
-    <field name="album" type="string" indexed="true" stored="true" required="true" multiValued="false" omitTermFreqAndPositions="true" omitNorms="true" />
+    <field name="album" type="string" indexed="true" stored="true" required="false" multiValued="false" omitTermFreqAndPositions="true" omitNorms="true" />
     <field name="trackLengthSec" type="double" indexed="false" stored="true" required="false" multiValued="false" omitTermFreqAndPositions="true" omitNorms="true" />
     <field name="releaseYear" type="int" indexed="false" stored="true" required="false" multiValued="false" omitTermFreqAndPositions="true" omitNorms="true" />
 

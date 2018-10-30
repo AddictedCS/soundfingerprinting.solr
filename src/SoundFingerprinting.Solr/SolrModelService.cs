@@ -18,13 +18,5 @@
         protected SolrModelService(ITrackDao trackDao, ISubFingerprintDao subFingerprintDao) : base(trackDao, subFingerprintDao)
         {
         }
-
-        public override bool SupportsBatchedSubFingerprintQuery
-        {
-            get
-            {
-                return true;
-            }
-        }
     }
 }
