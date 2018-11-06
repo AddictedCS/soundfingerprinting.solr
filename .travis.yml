@@ -1,6 +1,6 @@
 language: csharp
 mono: none
-dotnet: 2.1.0
+dotnet: 2.1.403
 solution: src/SoundFingerprinting.Solr.sln
 services:
   - docker
