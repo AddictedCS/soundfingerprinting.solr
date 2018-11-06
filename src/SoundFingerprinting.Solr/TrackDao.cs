@@ -72,7 +72,7 @@
             return FirstFromResultSet(results);
         }
 
-        public IEnumerable<TrackData> ReadTrackByReferences(IEnumerable<IModelReference> ids)
+        public IEnumerable<TrackData> ReadTracksByReferences(IEnumerable<IModelReference> ids)
         {
             string sids = string.Join(",", ids.Select(id => $"\"{SolrModelReference.GetId(id)}\""));
             var query = new SolrQuery($"trackId:({sids})");

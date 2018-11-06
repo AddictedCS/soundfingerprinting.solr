@@ -20,21 +20,20 @@
         private readonly int[] secondTrackBuckets = { 2, 2, 4, 5, 6, 7, 7, 9, 10, 11, 12, 13, 14, 14, 16, 17, 18, 19, 20, 20, 22, 23, 24, 25, 26 };
 
         // query buckets are similar with 5 elements from first track and 4 elements from second track
-        private readonly QueryHash queryBuckets = new QueryHash(new[] { 3, 2, 5, 6, 7, 8, 7, 10, 11, 12, 13, 14, 15, 14, 17, 18, 19, 20, 21, 20, 23, 24, 25, 26, 25 }, 0);
+        private readonly int[] queryBuckets = { 3, 2, 5, 6, 7, 8, 7, 10, 11, 12, 13, 14, 15, 14, 17, 18, 19, 20, 21, 20, 23, 24, 25, 26, 25 };
 
 
         private readonly SolrModelService modelService = new SolrModelService();
         private readonly FingerprintCommandBuilder fcb = new FingerprintCommandBuilder();
         private readonly IAudioService audioService = new SoundFingerprintingAudioService();
-        private readonly TrackDao trackDao = new TrackDao();
 
         [TearDown]
         public void TearDown()
         {
-            var allTracks = trackDao.ReadAll();
+            var allTracks = modelService.ReadAllTracks();
             foreach (var track in allTracks)
             {
-                trackDao.DeleteTrack(track.TrackReference);
+                modelService.DeleteTrack(track.TrackReference);
             }
         }
 
@@ -47,7 +46,13 @@
                                          .Hash();
 
             var track = new TrackInfo("id", "artist", "title", 4d);
-            modelService.Insert(track, hashedFingerprints);
+            var reference = modelService.Insert(track, hashedFingerprints);
+
+            var resultTrack = modelService.ReadTrackByReference(reference);
+            Assert.AreEqual(track.Id, resultTrack.ISRC);
+            Assert.AreEqual(track.Artist, resultTrack.Artist);
+            Assert.AreEqual(track.Title, resultTrack.Title);
+            Assert.AreEqual(track.DurationInSeconds, resultTrack.Length);
         }
 
         [Test]
@@ -61,10 +66,10 @@
             var firstTrackReference = modelService.Insert(firstTrack, new[] { firstHashData });
             var secondTrackReference = modelService.Insert(secondTrack, new[] { secondHashData });
 
-            var subFingerprints = modelService.ReadSubFingerprints(new[] { queryBuckets }, new DefaultQueryConfiguration()).Matches.ToList();
+            var subFingerprints = modelService.ReadSubFingerprints(new[] { queryBuckets }, new DefaultQueryConfiguration()).ToList();
 
             Assert.AreEqual(2, subFingerprints.Count);
-            Assert.AreEqual(firstTrackReference, subFingerprints[0].SubFingerprint.TrackReference);
+            Assert.AreEqual(firstTrackReference, subFingerprints[0].TrackReference);
         }
 
         [Test]
@@ -78,10 +83,10 @@
             var firstTrackReference = modelService.Insert(firstTrack, new[] { firstHashData });
             var secondTrackReference = modelService.Insert(secondTrack, new[] { secondHashData });
 
-            var subFingerprints = modelService.ReadSubFingerprints(new[] { queryBuckets }, new DefaultQueryConfiguration { Clusters = new[] { "first-group-id" } }).Matches.ToList();
+            var subFingerprints = modelService.ReadSubFingerprints(new[] { queryBuckets }, new DefaultQueryConfiguration { Clusters = new[] { "first-group-id" } }).ToList();
 
             Assert.AreEqual(1, subFingerprints.Count);
-            Assert.AreEqual(firstTrackReference, subFingerprints[0].SubFingerprint.TrackReference);
+            Assert.AreEqual(firstTrackReference, subFingerprints[0].TrackReference);
         }
 
         [Test]
@@ -95,11 +100,11 @@
             var firstTrackReference = modelService.Insert(firstTrack, new[] { firstHashData });
             var secondTrackReference = modelService.Insert(secondTrack, new[] { secondHashData });
 
-            var subFingerprints = modelService.ReadSubFingerprints(new[] { queryBuckets }, new DefaultQueryConfiguration { Clusters = new[] { "not-all", "all" } }).Matches.ToList();
+            var subFingerprints = modelService.ReadSubFingerprints(new[] { queryBuckets }, new DefaultQueryConfiguration { Clusters = new[] { "not-all", "all" } }).ToList();
 
             Assert.AreEqual(2, subFingerprints.Count);
-            Assert.AreEqual(firstTrackReference, subFingerprints[0].SubFingerprint.TrackReference);
-            Assert.AreEqual(secondTrackReference, subFingerprints[1].SubFingerprint.TrackReference);
+            Assert.AreEqual(firstTrackReference, subFingerprints[0].TrackReference);
+            Assert.AreEqual(secondTrackReference, subFingerprints[1].TrackReference);
         }
 
         [Test]

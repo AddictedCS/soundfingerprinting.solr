@@ -21,7 +21,7 @@
         [TearDown]
         public void TearDown()
         {
-            var allTracks = trackDao.ReadAll();
+            var allTracks = modelService.ReadAllTracks();
             TearDownTracks(allTracks.Select(t => t.TrackReference));
         }
 
@@ -57,7 +57,7 @@
                 refs.Add(trackData.TrackReference);
             }
 
-            var actual = trackDao.ReadTrackByReferences(refs);
+            var actual = trackDao.ReadTracksByReferences(refs);
             Assert.AreEqual(10, actual.Count());
         }
 
@@ -220,7 +220,7 @@
         {
             foreach (var modelReference in modelReferences)
             {
-                trackDao.DeleteTrack(modelReference);
+                modelService.DeleteTrack(modelReference);
             }
         }
     }

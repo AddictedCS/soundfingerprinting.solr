@@ -24,10 +24,10 @@
         [TearDown]
         public void TearDown()
         {
-            var allTracks = trackDao.ReadAll();
+            var allTracks = modelService.ReadAllTracks();
             foreach (var track in allTracks)
             {
-                trackDao.DeleteTrack(track.TrackReference);
+                modelService.DeleteTrack(track.TrackReference);
             }
         }
 
@@ -87,31 +87,30 @@
             const int ThresholdVotes = 25;
             foreach (var hashedFingerprint in hashedFingerprintsForFirstTrack)
             {
-                var subFingerprintData = subFingerprintDao.ReadSubFingerprints(new[] { new QueryHash(hashedFingerprint.HashBins, 0) },
+                var subFingerprintData = subFingerprintDao.ReadSubFingerprints(new[] { hashedFingerprint.HashBins },
                     new DefaultQueryConfiguration
                         {
                             ThresholdVotes = ThresholdVotes,
                             Clusters = new[] { "first-group-id" }
                         })
-                    .Matches
                     .ToList();
 
                 Assert.AreEqual(1, subFingerprintData.Count);
-                Assert.AreEqual(firstTrackData.TrackReference, subFingerprintData[0].SubFingerprint.TrackReference);
+                Assert.AreEqual(firstTrackData.TrackReference, subFingerprintData[0].TrackReference);
 
                 subFingerprintData = subFingerprintDao.ReadSubFingerprints(
-                    new[] { new QueryHash(hashedFingerprint.HashBins, 0) },
+                    new[] { hashedFingerprint.HashBins },
                     new DefaultQueryConfiguration
                         {
                             ThresholdVotes = ThresholdVotes,
                             Clusters = new[] { "second-group-id" }
                         })
-                    .Matches.ToList();
+                    .ToList();
 
                 Assert.AreEqual(1, subFingerprintData.Count);
-                Assert.AreEqual(secondTrackData.TrackReference, subFingerprintData[0].SubFingerprint.TrackReference);
+                Assert.AreEqual(secondTrackData.TrackReference, subFingerprintData[0].TrackReference);
 
-                subFingerprintData = subFingerprintDao.ReadSubFingerprints(new[] { new QueryHash(hashedFingerprint.HashBins, 0) },
+                subFingerprintData = subFingerprintDao.ReadSubFingerprints(new[] { hashedFingerprint.HashBins },
                     new DefaultQueryConfiguration
                         {
                             ThresholdVotes = ThresholdVotes,
@@ -120,7 +119,6 @@
                                                "first-group-id", "second-group-id", "third-group-id"
                                            }
                         })
-                    .Matches
                     .ToList();
 
                 Assert.AreEqual(2, subFingerprintData.Count);
