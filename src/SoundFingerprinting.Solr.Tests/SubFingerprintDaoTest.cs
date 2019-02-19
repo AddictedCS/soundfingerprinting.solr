@@ -40,11 +40,11 @@
         [Test]
         public void ShouldBatchQueriesToSolr()
         {
-            var hashes = new List<QueryHash>();
+            var hashes = new List<int[]>();
             const int FingerprintsCount = 256;
             for (int i = 0; i < FingerprintsCount; ++i)
             {
-                hashes.Add(new QueryHash(new int[25], (uint)i));
+                hashes.Add(new int[25]);
             }
 
             List<int> batchSizes = new List<int>();
@@ -92,7 +92,7 @@
             solrConfig.Setup(config => config.QueryBatchSize).Returns(BatchSize);
             solrConfig.Setup(config => config.PreferLocalShards).Returns(true);
 
-            subFingerprintDao.ReadSubFingerprints(new[] { new QueryHash(new int[25], 0) }, new DefaultQueryConfiguration { ThresholdVotes = 5, Clusters = new[] { "CA", "LA" } });
+            subFingerprintDao.ReadSubFingerprints(new[] { new int[25] }, new DefaultQueryConfiguration { ThresholdVotes = 5, Clusters = new[] { "CA", "LA" } });
         }
 
         [Test]
