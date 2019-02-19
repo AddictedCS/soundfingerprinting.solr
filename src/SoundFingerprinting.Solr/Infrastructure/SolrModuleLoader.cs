@@ -1,9 +1,10 @@
 ﻿namespace SoundFingerprinting.Solr.Infrastructure
 {
+    using System;
     using System.Configuration;
 
     using CommonServiceLocator;
-
+    using Microsoft.Extensions.Configuration;
     using Ninject;
     using Ninject.Integration.SolrNet;
 
@@ -17,12 +18,22 @@
         public void LoadAssemblyBindings()
         {
             var kernel = new StandardKernel();
-            var solrConfig = (SoundFingerprintingSolrConfigurationSection)ConfigurationManager.GetSection("solr");
-            
-            kernel.Load(new SolrNetModule(solrConfig.SolrServers));
 
-            kernel.Bind<ISoundFingerprintingSolrConfig>().ToConstant(
-                new SoundFingerprintingSolrConfig(solrConfig.QueryBatchSize, solrConfig.PreferLocalShards));
+            var configBuilder = new ConfigurationBuilder()
+                .SetBasePath(AppContext.BaseDirectory)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
+                .Build();
+
+            IConfigurationSection solrConfig = configBuilder.GetSection("solr");
+            
+            // TODO remap to SolrServer
+            solrConfig
+            
+            // TODO Inject Solr Servers
+            kernel.Load(new SolrNetModule(solrConfig..SolrServers));
+
+            
+            kernel.Bind<ISoundFingerprintingSolrConfig>().ToConstant(new SoundFingerprintingSolrConfig(int.Parse(solrConfig["queryBatchSize"]), bool.Parse(solrConfig["preferLocalShards"])));
 
             var tracksConnection = GetTracksConnection(kernel);
             var fingerprintsConnection = GetFingerprintsConnection(kernel);

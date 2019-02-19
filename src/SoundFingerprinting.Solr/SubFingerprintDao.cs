@@ -14,7 +14,6 @@
     using SoundFingerprinting.DAO;
     using SoundFingerprinting.DAO.Data;
     using SoundFingerprinting.Data;
-    using SoundFingerprinting.Query;
     using SoundFingerprinting.Solr.Config;
     using SoundFingerprinting.Solr.Converters;
     using SoundFingerprinting.Solr.DAO;
@@ -99,11 +98,11 @@
             return results.Select(GetSubFingerprintData).ToList();
         }
 
-        public FingerprintsQueryResponse ReadSubFingerprints(IEnumerable<QueryHash> hashes, QueryConfiguration queryConfiguration)
+        public IEnumerable<SubFingerprintData> ReadSubFingerprints(IEnumerable<int[]> hashes, QueryConfiguration queryConfiguration)
         {
             var clusters = queryConfiguration.Clusters;
             var threshold = queryConfiguration.ThresholdVotes;
-            var enumerable = hashes as List<QueryHash> ?? hashes.ToList();
+            var enumerable = hashes as List<int[]> ?? hashes.ToList();
             int total = enumerable.Count;
             var result = new HashSet<SubFingerprintData>();
             var filterQuery = GetFilterQueries(clusters);
@@ -111,7 +110,7 @@
             bool preferLocalShards = solrConfig.PreferLocalShards;
             for (int i = 0; i < total; i += batchSize)
             {
-                var batch = enumerable.Skip(i).Take(batchSize).Select(hash => hash.Hashes);
+                var batch = enumerable.Skip(i).Take(batchSize);
                 string queryString = solrQueryBuilder.BuildReadQueryForHashesAndThreshold(batch, threshold);
                 var results = solr.Query(new SolrQuery(queryString),
                     new QueryOptions
@@ -130,25 +129,7 @@
                 result.UnionWith(ConvertResults(results));
             }
 
-            var matches = MatchResults(enumerable, result, threshold);
-            return new FingerprintsQueryResponse(matches);
-        }
-
-        private static List<QueryResponseMatch> MatchResults(IEnumerable<QueryHash> enumerable, HashSet<SubFingerprintData> result, int threshold)
-        {
-            var matches = new List<QueryResponseMatch>();
-            foreach (var query in enumerable)
-            {
-                foreach (var match in result)
-                {
-                    if (QueryMath.IsCandidatePassingThresholdVotes(query.Hashes, match.Hashes, threshold))
-                    {
-                        matches.Add(new QueryResponseMatch(match, query.SequenceNumber));
-                    }
-                }
-            }
-
-            return matches;
+            return result;
         }
 
         private IEnumerable<SubFingerprintData> ConvertResults(IEnumerable<SubFingerprintDTO> results)

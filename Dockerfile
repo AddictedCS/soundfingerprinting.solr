@@ -31,6 +31,7 @@ RUN chown -R $SOLR_USER:$SOLR_USER /opt/solr/server/solr
 
 COPY docker/entrypoint.sh /opt/scripts
 RUN chown -R $SOLR_USER:$SOLR_USER /opt/scripts
+RUN chmod +x /opt/scripts/entrypoint.sh
 
 EXPOSE 8983
 WORKDIR /opt/solr
