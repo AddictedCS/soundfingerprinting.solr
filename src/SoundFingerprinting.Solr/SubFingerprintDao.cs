@@ -14,7 +14,6 @@
     using SoundFingerprinting.DAO;
     using SoundFingerprinting.DAO.Data;
     using SoundFingerprinting.Data;
-    using SoundFingerprinting.Query;
     using SoundFingerprinting.Solr.Config;
     using SoundFingerprinting.Solr.Converters;
     using SoundFingerprinting.Solr.DAO;

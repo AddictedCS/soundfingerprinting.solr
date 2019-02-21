@@ -11,7 +11,7 @@ ENV SOLR_UID 8983
 RUN groupadd -r -g $SOLR_UID $SOLR_USER && \
   useradd -r -u $SOLR_UID -g $SOLR_USER $SOLR_USER
 
-ENV SOLR_VERSION 7.5.0
+ENV SOLR_VERSION 7.7.0
 ENV SOLR_URL https://archive.apache.org/dist/lucene/solr/$SOLR_VERSION/solr-$SOLR_VERSION.tgz
 
 RUN mkdir -p /opt/solr && \
@@ -31,6 +31,7 @@ RUN chown -R $SOLR_USER:$SOLR_USER /opt/solr/server/solr
 
 COPY docker/entrypoint.sh /opt/scripts
 RUN chown -R $SOLR_USER:$SOLR_USER /opt/scripts
+RUN chmod +x /opt/scripts/entrypoint.sh
 
 EXPOSE 8983
 WORKDIR /opt/solr
