@@ -1,5 +1,6 @@
 language: csharp
 solution: src/SoundFingerprinting.Solr.sln
+dotnet: 2.1.300
 services:
   - docker
 before_install:
