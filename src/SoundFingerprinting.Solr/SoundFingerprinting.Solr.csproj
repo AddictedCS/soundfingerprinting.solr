@@ -10,7 +10,7 @@
 	<PackageProjectUrl>https://github.com/AddictedCS/soundfingerprinting.solr</PackageProjectUrl>
 	<RepositoryUrl>https://github.com/AddictedCS/soundfingerprinting.solr</RepositoryUrl>
 	<RepositoryType>git</RepositoryType>
-	<PackageReleaseNotes>Version 6.0.0 implements changes in model service protocol. Version 5.0.0 comes with dependent package upgrades, corresponding to SoundFingerprinting-5.0.0. Version 4.1.0 is first stable release after the upgrade to SolrNet 0.9.1. Since latest SolrNet is not compatible with .NET v4.5, minimal .NET version requirement is now .NET 4.6. Solr backend for SoundFingerprinting framework is released separately from main SoundFingerprinting library. This release corresponds to v4.1.0 release of SoundFingerprinting library</PackageReleaseNotes>
+	<PackageReleaseNotes>Since 6.3.0, SoundFingerprinting Solr is deprecated in favor of Emy storage. Version 6.0.0 implements changes in model service protocol. Version 5.0.0 comes with dependent package upgrades, corresponding to SoundFingerprinting-5.0.0. Version 4.1.0 is first stable release after the upgrade to SolrNet 0.9.1. Since latest SolrNet is not compatible with .NET v4.5, minimal .NET version requirement is now .NET 4.6. Solr backend for SoundFingerprinting framework is released separately from main SoundFingerprinting library. This release corresponds to v4.1.0 release of SoundFingerprinting library</PackageReleaseNotes>
 	<PackageTags>Audio Identification Fingerprinting Digital Signal Processing Music Recognition Data Mining Content Sound Shazam</PackageTags>
   </PropertyGroup>
   <ItemGroup>
